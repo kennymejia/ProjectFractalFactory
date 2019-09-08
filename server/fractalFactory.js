@@ -19,5 +19,5 @@ app.get('*', function(req, res){
 });
 
 
-app.listen(configurationController.configurationVariables.port, () => logController.logger.info(`museWatchdog is running on port ${configurationController.configurationVariables.port}`));
+app.listen(configurationController.configurationVariables.port, () => logController.logger.info(`fractalFactory is running on port ${configurationController.configurationVariables.port}`));
 
