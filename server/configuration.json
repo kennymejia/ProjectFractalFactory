@@ -1,0 +1,5 @@
+{
+  "port": 1338,
+  "logFile": "fractalFactory.log",
+  "logLevel": "debug",
+}
