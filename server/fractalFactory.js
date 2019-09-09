@@ -6,12 +6,15 @@ const app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.json({ type: 'application/json'}));
 
-app.use(express.static(`${__dirname}/index`));
+app.use(express.static(`client/public`));
 
 // Page routing
 app.get('/', function (req, res) {
-  res.sendFile('interface.html', { root: `${__dirname}/index.html` });
+  res.sendFile('index.html', { root: `client/views` });
 })
+
+// Data routing
+// app.route('')
 
 // Simple 404 page
 app.get('*', function(req, res){
@@ -19,5 +22,8 @@ app.get('*', function(req, res){
 });
 
 
-app.listen(configurationController.configurationVariables.port, () => logController.logger.info(`fractalFactory is running on port ${configurationController.configurationVariables.port}`));
+app.listen(configurationController.configurationVariables.port, () => {
+	console.log(`fractalFactory is running on port ${configurationController.configurationVariables.port}`);
+	logController.logger.info(`fractalFactory is running on port ${configurationController.configurationVariables.port}`);
+});
 

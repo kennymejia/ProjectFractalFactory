@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/StentonRR/Fractal-Factory#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "log4js": "^5.1.0"
   }
 }
