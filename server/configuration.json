@@ -1,5 +1,10 @@
 {
   "port": 1337,
   "logFile": "server/logs/fractalFactory.log",
-  "logLevel": "ALL"
+  "logLevel": "ALL",
+  "dbhost": "localhost",
+  "dbname": "",
+  "dbuser": "",
+  "dbpassword": "",
+  "dbport": ""
 }
