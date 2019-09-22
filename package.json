@@ -24,6 +24,8 @@
   "homepage": "https://github.com/StentonRR/Fractal-Factory#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "log4js": "^5.1.0"
+    "log4js": "^5.1.0",
+    "node-fetch": "^2.6.0",
+    "pg": "^7.12.1"
   }
 }
