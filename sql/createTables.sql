@@ -19,7 +19,7 @@ CREATE TABLE paintings(
 	-- Metadata for painting may be null ... be aware of this on front-end
 	name VARCHAR(150),
 	painter VARCHAR(100),
-	year_created DATE, 
+	year_created NUMERIC(4), 
 	-- End of metadata
 	date_added TIMESTAMP DEFAULT NOW() NOT NULL,
     date_last_updated TIMESTAMP DEFAULT NOW() NOT NULL
