@@ -1,5 +1,6 @@
 const configurationController = require('./controllers/configurationController.js');
 const logController = require('./controllers/logController.js');
+const bootstrap = require('bootstrap');
 const express = require('express');
 const app = express();
 
