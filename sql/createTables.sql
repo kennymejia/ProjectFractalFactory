@@ -1,5 +1,5 @@
 -- Need to add uuid-ossp extention to generate uuid's
--- CREATE EXTENSION "uuid-ossp";
+CREATE EXTENSION "uuid-ossp";
 
 CREATE TABLE users(
    user_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -36,9 +36,9 @@ CREATE TABLE user_source_files(
 
 CREATE TABLE user_paintings(
 	user_painting_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-	painting_id UUID NOT NULL REFERENCES paintings(painting_id) ON DELETE RESTRICT,
-	user_source_file_id UUID NOT NULL REFERENCES user_source_files(user_source_file_id) ON DELETE RESTRICT,
-	user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT,
+	painting_id UUID NOT NULL REFERENCES paintings(painting_id) ON DELETE RESTRICT, -- Referential integrity constraint
+	user_source_file_id UUID NOT NULL REFERENCES user_source_files(user_source_file_id) ON DELETE RESTRICT, -- Referential integrity constraint
+	user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT, -- Referential integrity constraint
 	file_location VARCHAR(250) NOT NULL,
 	watermark_flag BOOLEAN DEFAULT 't' NOT NULL,
 	date_added TIMESTAMP DEFAULT NOW() NOT NULL,
