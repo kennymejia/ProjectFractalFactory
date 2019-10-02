@@ -1,0 +1,146 @@
+html,body {
+    background: #efefef;
+    font-family: "Arial";
+  }
+
+  .container {
+    max-width: 1250px;
+    margin: 30px auto 30px;
+    padding: 0 !important;
+    width: 90%;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.10), 0 3px 6px rgba(0,0,0,0.10);
+    z-index: 22;
+  }
+
+  header {
+    background: #eee;
+    filter: blur(3px);
+    background-image: url("https://image.freepik.com/free-photo/desktop-source-code-wallpaper-by-computer-language-with-coding-programming_33771-595.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-color: red;
+    height: 250px;
+  }
+  
+  header i {
+    position: relative;
+    cursor: pointer;
+    right: -96%;
+    top: 25px;
+    font-size: 18px !important;
+    color: #fff;
+  }
+  
+  @media (max-width:800px) {
+    header {
+      height: 150px;
+    } 
+    
+    header i {
+      right: -90%;
+    }
+  }
+  
+  main {
+        padding: 20px 20px 0px 20px;
+  }
+  
+  .left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  
+  .photo {
+    width: 200px;
+    height: 200px;
+    margin-top: -120px;
+    border-radius: 100px;
+    border: 4px solid #fff;
+  }
+    
+  .name {
+    margin-top: 20px;
+    font-family: "Open Sans";
+    font-weight: 600;
+    font-size: 18pt;
+    color: #777;
+  }
+  
+  .info {
+    margin-top: -5px;
+    margin-bottom: 5px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18pt;
+    color: #aaa;
+  }
+  
+  .stats {
+    margin-top: 25px;
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ededed;
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  
+  .number-stat {
+    padding: 0px;
+    font-size: 18pt;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    color: #aaa;
+  }
+  
+  .desc-stat {
+    margin-top: 5px;
+    font-size: 14pt;
+    color: #bbb;
+  }
+  
+  .desc {
+    text-align: center;
+    margin-top: 25px;
+    margin: 25px 40px;
+    color: #999;
+    font-size: 18pt;
+    font-family: "Open Sans";
+    padding-bottom: 25px;
+    border-bottom: 1px solid #ededed;
+  }
+  
+  .right {
+    padding: 0 25px 0 25px !important;
+  }
+  
+  .nav {
+    text-align: center;
+  }
+  
+  .nav {
+    margin: 40px 30px 0 10px;
+    font-size: 18pt;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    color: #888;
+    text-align: center;
+  }
+    
+  .gallery  {
+    margin-top: 35px;
+    left: 50%;
+    top: 50%;
+  }
+  
+  .gallery img {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.10), 0 3px 6px rgba(0,0,0,0.10);
+    width: 100%; 
+    height: auto;
+    cursor: pointer;
+    max-width: 100%;
+    left: 50%;
+    top: 50%;
+  }

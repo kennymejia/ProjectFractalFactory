@@ -30,7 +30,7 @@
 }
 
 .btn {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 55%;
     z-index: 20;
