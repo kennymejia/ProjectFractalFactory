@@ -13,6 +13,10 @@ app.get('/', function (req, res) {
   res.sendFile('index.html', { root: `client/views` });
 })
 
+app.get('/profile.html', function (req,res) {
+    res.sendFile('profile.html', {root: 'client/views'});
+})
+
 // Data routing
 // app.route('')
 
