@@ -8,10 +8,17 @@ app.use(bodyParser.json({ type: 'application/json'}));
 
 app.use(express.static(`client/public`));
 
+app.set('views', 'client/views');
+app.set('view-engine', 'ejs');
+
 // Page routing
-app.get('/', function (req, res) {
-  res.sendFile('index.html', { root: `client/views` });
-})
+//app.get('/', function (req, res) {
+//  res.sendFile('index.html', { root: `client/views` });
+//})
+
+app.get('/', (req, res) => {
+    res.render('index.ejs');
+});
 
 app.get('/profile.html', function (req,res) {
     res.sendFile('profile.html', {root: 'client/views'});
