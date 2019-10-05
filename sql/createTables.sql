@@ -1,9 +1,11 @@
 -- Need to add uuid-ossp extention to generate uuid's
-CREATE EXTENSION "uuid-ossp";
+--CREATE EXTENSION "uuid-ossp";
 
 CREATE TABLE users(
    user_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
    user_account VARCHAR (255) NOT NULL,
+   password VARCHAR (255),
+   token VARCHAR (255),
    account_type VARCHAR (40) NOT NULL,
    admin_flag BOOLEAN DEFAULT 'f' NOT NULL,
    last_login TIMESTAMP DEFAULT NOW() NOT NULL,

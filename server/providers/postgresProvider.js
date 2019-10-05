@@ -1,18 +1,20 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 const { Pool } = require('pg')
-const configurationController = require('../controllers/configurationController.js');
 const logController = require('../controllers/logController.js');
 
 
 const pool = new Pool({
-  host: configurationController.configurationVariables.dbhost,
-  database: configurationController.configurationVariables.dbname,
-  user: configurationController.configurationVariables.dbuser,
-  password: configurationController.configurationVariables.dbpassword,
-  port: configurationController.configurationVariables.dbport,
+  host: process.env.DBHOST,
+  database: process.env.DBNAME,
+  user: process.env.DBUSER,
+  password: process.env.DBPASSWORD,
+  port: process.env.DBPORT,
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
-})
+});
 
 
 module.exports = {
@@ -31,10 +33,10 @@ module.exports = {
 		}
   },
 
-  query: async sql => {
+  query: async (sql, parameters) => {
     try{
 		let client = await pool.connect();
-		let res = await client.query(sql);
+		let res = await client.query(sql, parameters);
 
 		client.release();
 

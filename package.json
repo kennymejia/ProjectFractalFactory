@@ -4,7 +4,7 @@
   "description": "A service that takes files of code and produces a unique painting based on the fractal dimension of the code.",
   "main": "fractalFactory.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "devStart": "nodemon server/fractalFactory.js"
   },
   "repository": {
     "type": "git",
@@ -23,12 +23,17 @@
   },
   "homepage": "https://github.com/StentonRR/Fractal-Factory#readme",
   "dependencies": {
-    "bootstrap": "^4.3.1",
+    "bcrypt": "^3.0.6",
+    "dotenv": "^8.1.0",
+    "ejs": "^2.7.1",
     "express": "^4.17.1",
     "jquery": "^3.4.1",
     "log4js": "^5.1.0",
     "node-fetch": "^2.6.0",
     "pg": "^7.12.1",
     "popper.js": "^1.15.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.3"
   }
 }
