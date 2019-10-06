@@ -1,18 +1,18 @@
 const dotenv = require('dotenv');
 dotenv.config();
-
 const logController = require('./controllers/logController.js');
 const express = require('express');
 const app = express();
 const bcrypt = require('bcrypt');
 const postgresProvider = require('./providers/postgresProvider');
-
 const passport = require('passport');
 const flash = require('express-flash');
 const session = require('express-session');
 const methodOverride = require('method-override');
-
+const bodyParser = require('body-parser');
 const initializePassport = require('./passport-config');
+
+// Initialize passport with some database functions for authentication
 initializePassport.initialize(
     passport,
     async username => {
@@ -40,29 +40,10 @@ initializePassport.initialize(
     });
 
 
-const errorHandler = require('errorhandler');
-if (process.env.NODE_ENV === 'development') {
-    // only use in development
-    app.use(errorHandler({ dumpExceptions: true, showStack: true }));
-}
-
-process.on('unhandledRejection', (reason, promise) => {
-    console.log('Unhandled Rejection at:', reason.stack || reason)
-    // Recommended: send the information to sentry.io
-    // or whatever crash reporting service you use
-});
-
-
-var bodyParser = require('body-parser');
+// Express and Passport Settings
 app.use(bodyParser.json({ type: 'application/json'}));
-
 app.use(express.static(`client/public`));
 app.use(express.urlencoded({ extended: false })); // Access form posts in request method
-
-app.set('views', 'client/views');
-app.set('view-engine', 'ejs');
-
-// For passport.js and sessions
 app.use(flash());
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -71,29 +52,31 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(methodOverride('_method')); // Used to change method to clearer one for form posts
 
-app.use(methodOverride('_method'));
+app.set('views', 'client/views');
+app.set('view-engine', 'ejs');
+
+
+
 
 // Page routing
 app.get('/', checkNotAuthenticated, (req, res) => {
     res.render('login.ejs');
 });
 
-app.get('/register', checkNotAuthenticated, function (req,res) {
-    res.render('register.ejs');
-});
-
 app.get('/profile', checkAuthenticated, function (req,res) {
     res.render('profile.ejs');
 });
 
-app.get('/about', checkAuthenticated, function (req,res) {
+app.get('/about', checkNotAuthenticated, function (req,res) {
     res.render('about.ejs');
 });
 
 app.get('/results', checkAuthenticated, function (req,res) {
     res.render('results.ejs');
 });
+
 
 // Data routing
 
@@ -109,7 +92,7 @@ app.post('/register', checkNotAuthenticated,  async (req, res) => {
     try {
         let hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-        //Create user of default type in database
+        // Create user of default type in database...prepared statement for sanitation
         await postgresProvider.query(`INSERT INTO users (user_account, password, account_type)
                                    VALUES ($1, $2, $3)`, [req.body.username, hashedPassword, 'default']);
 
@@ -143,7 +126,7 @@ function checkAuthenticated(req, res, next) {
     res.redirect('/');
 }
 
-// Make sure user is not authenticated before allowing access to specified routes
+// Make sure user is not authenticated before allowing access to unprotected routes
 function checkNotAuthenticated(req, res, next) {
     if ( req.isAuthenticated() ) {
         return res.redirect('/profile');

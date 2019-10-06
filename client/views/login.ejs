@@ -2,19 +2,23 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <link href="css/index.css" rel="stylesheet">
-        <title>Fractal Team Landing Page</title>
-        <script src="js/index.js"></script>
+        <link href="css/login.css" rel="stylesheet">
+        <title>Login</title>
+        <script src="js/login.js"></script>
     </head>
 
     <body>
-        <h2 class="ff">Fractal Team Login</h2>
+        <h2 class="ff">Fractal Factory Login</h2>
 
-        <button class="btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
-
-        <% if (messages.error) { %>
-            <%= messages.error%>
-        <% }%>
+        <div class="centerDiv">
+            <div id="messages">
+                <% if (messages.error) { %>
+                    <%= messages.error%>
+                <% }%>
+            </div>
+            <button class="btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+            <button class="btn" onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Register</button>
+        </div>
 
         <div id="id01" class="modal">
             <form class="modal-content animate" action="/login" method="POST">
@@ -38,8 +42,31 @@
 
                 <div class="container" style="background-color:#f1f1f1">
                     <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
-                    <a href="/register">Register</a>
                     <span class="psw">Forgot <a href="#">password?</a></span>
+                </div>
+            </form>
+        </div>
+
+        <div id="id02" class="modal">
+            <form class="modal-content animate" action="/register" method="POST">
+                <div class="imgcontainer">
+                    <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+                    <img src="/images/logo.png" alt="Avatar" class="avatar">
+                </div>
+
+                <div class="container">
+                    <div>
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div>
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                </div>
+
+                <div class="container" style="background-color:#f1f1f1">
+                    <button type="submit">Register</button>
                 </div>
             </form>
         </div>
