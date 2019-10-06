@@ -1,9 +1,9 @@
-INSERT INTO USERS(user_id, user_account, account_type, admin_flag, last_login, date_added, date_last_updated) VALUES
-('072ba068-3256-46e7-9138-5f454b92b81e', 'example@gmail.com', 'Google', false, '2014-08-17 19:15:53', '2002-02-27 21:14:05', '2009-12-22 10:34:32'),
-('a67d93f5-d24c-458e-b090-ada03e10936e', 'kjl7w', 'Marist', true, '2017-11-11 07:57:24', '2014-03-22 17:24:48', '2017-11-11 07:57:24'),
-('1374801c-b520-4a55-aecc-b841930a05d4', 'fc@yahoo.com', 'Facebook', false, '2009-12-22 10:34:32', '2006-05-20 17:03:43', '2008-02-22 18:08:15'),
-('7ea674d9-eb9d-4ce4-9da9-0d0c50bfe55f', 'kjl8w', 'Marist', true, '2011-09-04 03:53:05', '2003-03-12 02:55:17', '2009-12-22 10:34:32'),
-('35eeb5a1-670a-46a6-ad9c-567d23fd339b', 'gg@gmail.com', 'Google', false, '2017-11-11 07:57:24', '2008-08-05 22:22:49', '2017-11-11 07:57:24')
+INSERT INTO USERS(user_id, user_account, password, account_type, admin_flag, last_login, date_added, date_last_updated) VALUES
+('072ba068-3256-46e7-9138-5f454b92b81e', 'example@gmail.com', '$2b$10$ilarA2jX6ZaiZwRne3I2ROG3fELZiC921QhVLzFL5WMjkjOD.1nkq', 'Google', false, '2014-08-17 19:15:53', '2002-02-27 21:14:05', '2009-12-22 10:34:32'),
+('a67d93f5-d24c-458e-b090-ada03e10936e', 'kjl7w', '$2b$10$ilarA2jX6ZaiZwRne3I2ROG3fELZiC921QhVLzFL5WMjkjOD.1nkq', 'Marist', true, '2017-11-11 07:57:24', '2014-03-22 17:24:48', '2017-11-11 07:57:24'),
+('1374801c-b520-4a55-aecc-b841930a05d4', 'fc@yahoo.com', '$2b$10$ilarA2jX6ZaiZwRne3I2ROG3fELZiC921QhVLzFL5WMjkjOD.1nkq', 'Facebook', false, '2009-12-22 10:34:32', '2006-05-20 17:03:43', '2008-02-22 18:08:15'),
+('7ea674d9-eb9d-4ce4-9da9-0d0c50bfe55f', 'kjl8w', '$2b$10$ilarA2jX6ZaiZwRne3I2ROG3fELZiC921QhVLzFL5WMjkjOD.1nkq', 'Marist', true, '2011-09-04 03:53:05', '2003-03-12 02:55:17', '2009-12-22 10:34:32'),
+('35eeb5a1-670a-46a6-ad9c-567d23fd339b', 'gg@gmail.com', '$2b$10$ilarA2jX6ZaiZwRne3I2ROG3fELZiC921QhVLzFL5WMjkjOD.1nkq', 'Google', false, '2017-11-11 07:57:24', '2008-08-05 22:22:49', '2017-11-11 07:57:24')
 ;
 
 INSERT INTO PAINTINGS(painting_id, file_location, fractal_dimension, name, painter, year_created, date_added, date_last_updated) VALUES
