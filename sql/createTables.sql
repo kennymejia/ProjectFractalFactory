@@ -1,4 +1,4 @@
--- Need to add uuid-ossp extention to generate uuid's
+-- Need to add uuid-ossp extension to generate uuid's
 --CREATE EXTENSION "uuid-ossp";
 
 CREATE TABLE users(
