@@ -10,6 +10,8 @@ const postgresProvider = require('./providers/postgresProvider');
 const passport = require('passport');
 const flash = require('express-flash');
 const session = require('express-session');
+const methodOverride = require('method-override');
+
 const initializePassport = require('./passport-config');
 initializePassport.initialize(
     passport,
@@ -70,35 +72,40 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(methodOverride('_method'));
+
 // Page routing
-app.get('/', (req, res) => {
+app.get('/', checkNotAuthenticated, (req, res) => {
     res.render('login.ejs');
 });
 
-app.get('/register', function (req,res) {
+app.get('/register', checkNotAuthenticated, function (req,res) {
     res.render('register.ejs');
 });
 
-app.get('/profile', function (req,res) {
+app.get('/profile', checkAuthenticated, function (req,res) {
     res.render('profile.ejs');
 });
 
-app.get('/about', function (req,res) {
+app.get('/about', checkAuthenticated, function (req,res) {
     res.render('about.ejs');
 });
 
-app.get('/results', function (req,res) {
+app.get('/results', checkAuthenticated, function (req,res) {
     res.render('results.ejs');
 });
 
 // Data routing
-app.post('/login', passport.authenticate('local', {
+
+// Either log in a user with an account or deny access
+app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
     successRedirect: '/profile',
     failureRedirect: '/',
     failureFlash: true
 }));
 
-app.post('/register', async (req, res) => {
+// Register new user with provided details
+app.post('/register', checkNotAuthenticated,  async (req, res) => {
     try {
         let hashedPassword = await bcrypt.hash(req.body.password, 10);
 
@@ -117,11 +124,32 @@ app.post('/register', async (req, res) => {
     }
 });
 
+// Log a user out
+app.delete('/logout', (req, res) => {
+    req.logOut(); // Setup by passport
+    res.redirect('/');
+});
+
 // Simple 404 page
 app.get('*', function(req, res){
     res.status(404).send('404 Error -- The droids you are looking for are not here');
 });
 
+// Make sure user is authenticated before allowing access to protected routes
+function checkAuthenticated(req, res, next) {
+    if ( req.isAuthenticated() ) {
+        return next();
+    }
+    res.redirect('/');
+}
+
+// Make sure user is not authenticated before allowing access to specified routes
+function checkNotAuthenticated(req, res, next) {
+    if ( req.isAuthenticated() ) {
+        return res.redirect('/profile');
+    }
+    next();
+}
 
 app.listen(process.env.PORT, () => {
 	console.log(`fractalFactory is running on port ${process.env.PORT}`);
