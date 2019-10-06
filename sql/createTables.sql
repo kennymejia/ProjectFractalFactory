@@ -3,8 +3,8 @@
 
 CREATE TABLE users(
    user_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-   user_account VARCHAR (255) NOT NULL UNIQUE, -- username or key
-   password VARCHAR (255) NOT NULL, -- Password or secret
+   user_account VARCHAR (255) NOT NULL UNIQUE, -- account identifier
+   password VARCHAR (255) NOT NULL, -- Password hash or token
    account_type VARCHAR (40) NOT NULL,
    admin_flag BOOLEAN DEFAULT 'f' NOT NULL,
    last_login TIMESTAMP DEFAULT NOW() NOT NULL,
