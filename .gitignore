@@ -3,8 +3,8 @@ node_modules/
 server/logs/*
 .idea/
 
-./package-lock.json
-./.env
+package-lock.json
+.env
 
 # exception to the rule
 !server/logs/.gitkeep 

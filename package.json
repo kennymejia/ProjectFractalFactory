@@ -26,12 +26,18 @@
     "bcrypt": "^3.0.6",
     "dotenv": "^8.1.0",
     "ejs": "^2.7.1",
+    "errorhandler": "^1.5.1",
     "express": "^4.17.1",
+    "express-flash": "0.0.2",
+    "express-session": "^1.16.2",
     "jquery": "^3.4.1",
     "log4js": "^5.1.0",
     "node-fetch": "^2.6.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
     "pg": "^7.12.1",
-    "popper.js": "^1.15.0"
+    "popper.js": "^1.15.0",
+    "request": "^2.88.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.3"

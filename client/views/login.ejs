@@ -12,6 +12,10 @@
 
         <button class="btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
 
+        <% if (messages.error) { %>
+            <%= messages.error%>
+        <% }%>
+
         <div id="id01" class="modal">
             <form class="modal-content animate" action="/login" method="POST">
                 <div class="imgcontainer">

@@ -7,6 +7,50 @@ const app = express();
 const bcrypt = require('bcrypt');
 const postgresProvider = require('./providers/postgresProvider');
 
+const passport = require('passport');
+const flash = require('express-flash');
+const session = require('express-session');
+const initializePassport = require('./passport-config');
+initializePassport.initialize(
+    passport,
+    async username => {
+        try {
+            let result = await postgresProvider.query(`SELECT * FROM users 
+                                           WHERE account_type = 'default' AND user_account = $1`, [username]);
+            if (!result.rows) {
+                return null;
+            } else {
+                return result.rows[0];
+            }
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+    async id => {
+        let result = await postgresProvider.query(`SELECT * FROM users 
+                                           WHERE account_type = 'default' AND user_id = $1`, [id]);
+        if (!result.rows) {
+            return null;
+        } else {
+            return result.rows[0];
+        }
+    });
+
+
+const errorHandler = require('errorhandler');
+if (process.env.NODE_ENV === 'development') {
+    // only use in development
+    app.use(errorHandler({ dumpExceptions: true, showStack: true }));
+}
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.log('Unhandled Rejection at:', reason.stack || reason)
+    // Recommended: send the information to sentry.io
+    // or whatever crash reporting service you use
+});
+
+
 var bodyParser = require('body-parser');
 app.use(bodyParser.json({ type: 'application/json'}));
 
@@ -15,6 +59,16 @@ app.use(express.urlencoded({ extended: false })); // Access form posts in reques
 
 app.set('views', 'client/views');
 app.set('view-engine', 'ejs');
+
+// For passport.js and sessions
+app.use(flash());
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Page routing
 app.get('/', (req, res) => {
@@ -38,18 +92,19 @@ app.get('/results', function (req,res) {
 });
 
 // Data routing
-app.post('/login', (req, res) => {
-
-});
+app.post('/login', passport.authenticate('local', {
+    successRedirect: '/profile',
+    failureRedirect: '/',
+    failureFlash: true
+}));
 
 app.post('/register', async (req, res) => {
-    console.log('hello');
     try {
         let hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-        // Create user of default type in database
+        //Create user of default type in database
         await postgresProvider.query(`INSERT INTO users (user_account, password, account_type)
-                                    VALUES ($1, $2, $3, $4)`, [req.body.username, hashedPassword, 'default']);
+                                   VALUES ($1, $2, $3)`, [req.body.username, hashedPassword, 'default']);
 
         // Redirect to login page so user can enter their details
         res.redirect('/');

@@ -43,6 +43,7 @@ module.exports = {
 		return res;
 		
     }catch(e){
+        console.log(e);
 		logController.logger.error(e);
     }
   }
