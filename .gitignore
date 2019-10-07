@@ -1,8 +1,10 @@
 # Don't track content of these folders
 node_modules/
 server/logs/*
+.idea/
 
-./package-lock.json
+package-lock.json
+.env
 
 # exception to the rule
 !server/logs/.gitkeep 

@@ -4,19 +4,20 @@
     <head>
         <meta charset="utf-8">
         <link href="css/profile.css" rel="stylesheet">
-        <title>Fractal Team Profile Page</title>
+        <title>Profile</title>
     </head>
 
     <body>
-        
-        <script src="js/index.js"></script>
         <div class="container">
                 <header>
                   <i class="fa fa-bars" aria-hidden="true"></i>
                 </header>
                 <main>
+                  <form action="/logout?_method=DELETE" method="POST" id="logoutForm">
+                      <button type="submit">Log Out</button>
+                  </form>
                   <div class="row">
-                    <div class="left col-lg-4">
+                    <div class="left col-lg-4" id="infoContainer">
                       <div class="photo-left">
                       </div>
                       <h4 class="name">Kenny Mejia</h4>
