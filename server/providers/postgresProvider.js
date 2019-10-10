@@ -77,7 +77,7 @@ module.exports = {
     addUser: async (userAccount, password, accountType) => {
         try {
             // Create user in database...prepared statement for sanitation
-            await provider.query(`INSERT INTO users (user_account, password, account_type)
+            await module.exports.query(`INSERT INTO users (user_account, password, account_type)
                                    VALUES ($1, $2, $3)`, [userAccount, password, accountType]);
         } catch(e) {
             console.log(e);
