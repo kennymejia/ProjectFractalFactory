@@ -4,20 +4,22 @@
     <head>
         <meta charset="utf-8">
         <link href="css/profile.css" rel="stylesheet">
-        <title>Profile</title>
+        <title>Fractal Team Profile Page</title>
     </head>
 
     <body>
+        
+        <script src="js/index.js"></script>
         <div class="container">
                 <header>
                   <i class="fa fa-bars" aria-hidden="true"></i>
                 </header>
                 <main>
-                  <form action="/logout?_method=DELETE" method="POST" id="logoutForm">
-                      <button type="submit">Log Out</button>
-                  </form>
+                    <form action="/logout?_method=DELETE" method="POST" id="logoutForm">
+                        <button type="submit">Log Out</button>
+                    </form>  
                   <div class="row">
-                    <div class="left col-lg-4" id="infoContainer">
+                    <div class="left col-lg-4">
                       <div class="photo-left">
                       </div>
                       <h4 class="name">Kenny Mejia</h4>
@@ -32,7 +34,13 @@
                       <p class="desc">Hi ! My name is Kenny Mejia Im A CS Student.</p>
                     </div>
                     <div class="right col-lg-8">
-                      <div class="nav">
+                        <div class="nav">
+                                <form action="http://localhost:1337/upload">
+                                    <input type="submit" value="Upload" />
+                                </form>
+                            
+                        </div>
+                        <div class="nav">
                             Gallery
                       </div>
                         <div class="gallery">
@@ -59,5 +67,4 @@
                 </main>
               </div>
     </body>
-
 </html>
