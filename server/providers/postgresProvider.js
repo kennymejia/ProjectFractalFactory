@@ -177,54 +177,65 @@ module.exports = {
         try {
             // Create user in database...prepared statement for sanitation
             let result = await module.exports.query(`INSERT INTO users (user_account, password, account_type)
-                                               VALUES ($1, $2, $3)`,
+                                               VALUES ($1, $2, $3) RETURNING user_id`,
                                     [userAccount, password, accountType]);
-            return result;
+            return result.rows[0].user_id;
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
         }
     },
 
-    addUserPainting: async (userId, paintingId, userSourceFileId, fileLocation) => {
+    addUserPainting: async (userId, paintingId, userSourceFileId) => {
         try {
             let result = await module.exports.query(`INSERT INTO user_paintings
-                                               (user_id, painting_id, user_source_file_id, file_location)
-                                               VALUES ($1, $2, $3, $4)`,
-                                    [userId, paintingId, userSourceFileId, fileLocation]);
-            return result;
+                                               (user_id, painting_id, user_source_file_id)
+                                               VALUES ($1, $2, $3) RETURNING user_painting_id`,
+                                    [userId, paintingId, userSourceFileId]);
+            return result.rows[0].user_painting_id;
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
         }
     },
 
-    addPainting: async (fileLocation, fractalDimension, name, painter, yearCreated) => {
+    addPainting: async (fractalDimension, name, painter, yearCreated) => {
         try {
             let result = await module.exports.query(`INSERT INTO paintings
-                                               (file_location, fractal_dimension, name, painter, year_created)
-                                               VALUES ($1, $2, $3, $4, $5)`,
-                                    [fileLocation, fractalDimension, name, painter, yearCreated]);
-            return result;
+                                               (fractal_dimension, name, painter, year_created)
+                                               VALUES ($1, $2, $3, $4) RETURNING painting_id`,
+                                    [fractalDimension, name, painter, yearCreated]);
+            return result.rows[0].painting_id;
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
         }
     },
 
-    addUserSourceFile: async (userId, fileLocation, fractalDimension) => {
+    addUserSourceFile: async (userId, fractalDimension) => {
         try {
             let result = await module.exports.query(`INSERT INTO user_source_files
-                                               (user_id, file_location, fractal_dimension)
-                                               VALUES ($1, $2, $3)`,
-                                    [userId, fileLocation, fractalDimension]);
+                                               (user_id, fractal_dimension)
+                                               VALUES ($1, $2) RETURNING user_source_file_id`,
+                                    [userId, fractalDimension]);
+            return result.rows[0].user_source_file_id;
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    ////////////////////// Update Data //////////////////////
+
+    updatePaintingFileLocation: async (paintingId, fileLocation) => {
+        try {
+            let result = await module.exports.query(`UPDATE paintings SET file_location = $1,
+                                                    date_last_updated = NOW()
+                                                    WHERE painting_id = $2`,[fileLocation, paintingId]);
             return result;
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
         }
     }
-
-}
-
-//
+};

@@ -1,8 +1,17 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 const fetch = require('node-fetch');
+const fs = require('fs');
+const https = require('https');
+const provider = require('./postgresProvider');
 
 let baseUrl = "https://collectionapi.metmuseum.org/public/collection/v1";
 
-var fetchPaintings = async (amount) => {
+// The API uses headers that don't function well with Node's new http parser, so use --http-parser=legacy
+// when calling these functions
+
+var fetchPaintings = async amount => {
   let objectsResult;
   let objectsJson;
 
@@ -27,7 +36,7 @@ var fetchPaintings = async (amount) => {
         paintings.push({
           name: paintingsJson.title,
           painter: paintingsJson.artistDisplayName,
-          year_created: paintingsJson.objectEndDate,
+          yearCreated: paintingsJson.objectEndDate,
           link: paintingsJson.primaryImage
         });
 
@@ -37,6 +46,34 @@ var fetchPaintings = async (amount) => {
   }
 
   return paintings;
-}
+};
 
-//fetchPaintings(3);
+var saveImageToDisk = (url, localPath) => {
+    let file = fs.createWriteStream(localPath);
+    https.get(url, res => {
+        if (res.statusCode === 200){
+            res.pipe(file);
+        }
+    });
+};
+
+var fillDatabase = async paintings => {
+    for (let painting of paintings) {
+        // TODO Calculate fractal dimension
+        let fractalDimension = 1.5;
+        let paintingId = await provider.addPainting(fractalDimension, painting.name,
+                                                painting.painter, painting.yearCreated);
+
+        let filePath = `${process.env.PAINTINGDIRECTORY}/${paintingId}.jpg`;
+        saveImageToDisk(painting.link, filePath);
+
+        await provider.updatePaintingFileLocation(paintingId, filePath);
+    }
+};
+
+var main = async () => {
+    let paintings = await fetchPaintings(3);
+    await fillDatabase(paintings);
+};
+
+main();
