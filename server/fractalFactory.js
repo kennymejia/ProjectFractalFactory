@@ -15,7 +15,7 @@ const initializePassport = require('./passport-config');
 // Initialize passport with some database functions for authentication
 initializePassport.initialize(
     passport,
-    async username => await provider.getUserByUsername(username),
+    async username => await provider.getUserByAccount(username),
     async id => await provider.getUserById(id)
 );
 
@@ -67,6 +67,7 @@ app.get('/results', checkAuthenticated, (req,res) => {
 
 
 //////////////////////  Data routing //////////////////////
+
 // Either log in a user with an account or deny access
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
     successRedirect: '/profile',

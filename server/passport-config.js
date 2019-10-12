@@ -2,9 +2,9 @@ const logController = require('./controllers/logController.js');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 
-module.exports.initialize = function (passport, getUserByUsername, getUserById) {
+module.exports.initialize = function (passport, getUserByAccount, getUserById) {
     const authenticateUserLocal = async (username, password, done) => {
-        const user = await getUserByUsername(username);
+        const user = await getUserByAccount(username);
 
         if(user == null) {
             return done(null, false, { message: 'No user with that username'} );

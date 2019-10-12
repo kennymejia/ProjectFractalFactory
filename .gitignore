@@ -2,6 +2,7 @@
 node_modules/
 server/logs/*
 .idea/
+server/sourcePaintingExamples/
 
 package-lock.json
 .env

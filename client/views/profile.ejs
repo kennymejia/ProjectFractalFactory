@@ -25,7 +25,7 @@
                       <p class="info">kenny.mejia1@marist.edu</p>
                       <div class="stats row">
                         <div class="stat col-xs-4">
-                          <div class="number-stat">6</div>
+                          <div class="number-stat"><%=userPaintings.length%></div>
                           <div class="desc-stat">Uploads</div>
                         </div>
                       </div>
@@ -35,26 +35,19 @@
                       <div class="nav">
                             Gallery
                       </div>
+
                         <div class="gallery">
-                            <div class="gallery">
-                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774813-photo4.jpg"/>
-                            </div>
-                            <div class="gallery">
-                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774814-photo5.jpg"/>
-                            </div>
-                            <div class="gallery">
-                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774814-photo6.jpg"/>
-                            </div>
-                            <div class="gallery">
-                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774817-photo1.jpg"/>
-                            </div>
-                            <div class="gallery">
-                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774815-photo2.jpg"/>
-                            </div>
-                            <div class="gallery">
-                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774816-photo3.jpg"/>
-                            </div>
+                            <% for (let i=0; i<userPaintings.length; i++) { %>
+                                <div class="gallery">
+                                    <img src="/user-painting/<%=userPaintings[i].user_painting_id%>"/>
+                                </div>
+                            <%}%>
+
+                            <% if(userPaintings.length == 0) {%>
+                                <p class="info">You have no paintings!</p>
+                            <%}%>
                         </div>
+
                     </div>
                 </main>
               </div>
