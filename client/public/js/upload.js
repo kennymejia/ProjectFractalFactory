@@ -32,3 +32,15 @@ function destroyClickedElement(event)
 {
 	document.body.removeChild(event.target);
 }
+
+
+window.addEventListener('load', (event) => {
+	// Put name of file that is being uploaded
+	let input = document.getElementById( 'fileUpload' );
+	let inputLabel = document.getElementById( 'fileUploadLabel' );
+
+	input.addEventListener('change', e => {
+		let fileName = input.files[0].name;
+		inputLabel.innerHTML = fileName;
+	});
+});

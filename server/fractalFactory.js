@@ -49,15 +49,21 @@ app.get('/', checkNotAuthenticated, (req, res) => {
 app.get('/profile', checkAuthenticated, async (req,res) => {
     // Get list of user painting ids -- pass to ejs
     let userPaintingIds = [];
+    let statistics;
     try {
         let user = await req.user;
         userPaintingIds = await provider.getUserPaintingIds(user.user_id);
+
+        // Admins get to see statistics
+        if (user.admin_flag) {
+            statistics = await provider.getStatistics();
+        }
     } catch(e) {
         console.log(e);
         logController.logger.error(e);
     }
 
-    res.render('profile.ejs', { userPaintings: userPaintingIds});
+    res.render('profile.ejs', { userPaintings: userPaintingIds, statistics: statistics});
 });
 
 app.get('/about', (req,res) => {

@@ -173,23 +173,23 @@ module.exports = {
 
     getStatistics: async () => {
         try {
-            let statistics = {"Number of Users": 0,
-                              "Number of User Paintings": 0,
-                              "Number of Paintings": 0,
-                              "Number of User Source Files": 0};
+            let statistics = {"Total Users": 0,
+                              "Total User Paintings": 0,
+                              "Total Paintings": 0,
+                              "Total User Source Files": 0};
 
             let result;
             result = await module.exports.query('SELECT COUNT(*) FROM users');
-            statistics["Number of Users"] = result.rows[0].count;
+            statistics["Total Users"] = result.rows[0].count;
 
             result = await module.exports.query('SELECT COUNT(*) FROM user_paintings');
-            statistics["Number of User Paintings"] = result.rows[0].count;
+            statistics["Total User Paintings"] = result.rows[0].count;
 
             result = await module.exports.query('SELECT COUNT(*) FROM paintings');
-            statistics["Number of Paintings"] = result.rows[0].count;
+            statistics["Total Paintings"] = result.rows[0].count;
 
             result = await module.exports.query('SELECT COUNT(*) FROM user_source_files');
-            statistics["Number of User Source Files"] = result.rows[0].count;
+            statistics["Total User Source Files"] = result.rows[0].count;
 
             return statistics;
         } catch(e) {

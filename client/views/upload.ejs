@@ -5,11 +5,14 @@
         <meta charset="utf-8">
         <link href="css/upload.css" rel="stylesheet">
         <title>Fractal Team Upload Page</title>
+
+        <script src="js/upload.js"></script>
     </head>
 
     <body>
-        
-        <script src="js/upload.js"></script>
+        <form action="/logout?_method=DELETE" method="POST" id="logoutForm">
+            <button type="submit">Log Out</button>
+        </form>
 
         <form action="/profile" id="profile">
             <button type="submit">Back To Profile</button>
@@ -18,15 +21,16 @@
         <div class="centerDiv">
             <h2 class="ff">Fractal Factory Upload</h2>
 
-            <form enctype="multipart/form-data" method="post">
-                <input class="custom-file-input" type="file" name="upload">
+            <form enctype="multipart/form-data" method="post" id="fileForm">
+                <input name="upload" class="custom-file-input" type="file" id="fileUpload" placeholder="Choose a file"/>
+                <label for="fileUpload" id="fileUploadLabel">Choose a file</label>
                 <input class="form-submit-button" type="submit" name="submit">
             </form>
 
-            <form action="/uploadText" method="post">
+            <form action="/uploadText" method="post" id="textForm">
                 <textarea id="inputTextToSave" class="textBoxCode" name="text"
                     placeholder="Paste Code Here..." cols="92" rows="20"></textarea>
-                <td><button class="textAreaSubmit" type="submit">Submit Text Area</button></td>
+                <button class="textAreaSubmit" type="submit">Submit Text Area</button>
             </form>
 
         </div>
