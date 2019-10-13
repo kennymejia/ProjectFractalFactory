@@ -1,6 +1,5 @@
 html,body {
-    background: black;
-    font-family: "Arial";
+    background: #050505;
   }
 
   .container {
@@ -14,13 +13,14 @@ html,body {
 
   header {
     background: #eee;
-    filter: blur(3px);
+    filter: blur(2px);
     background-image: url("https://image.freepik.com/free-photo/desktop-source-code-wallpaper-by-computer-language-with-coding-programming_33771-595.jpg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    background-color: red;
+    background-color: black;
     height: 250px;
+    box-shadow: 0 3px 6px rgba(100,100,100,0.20), 0 3px 6px rgba(100,100,100,0.20);
   }
   
   header i {
@@ -62,24 +62,25 @@ html,body {
   }
     
   .name {
-    margin-top: 20px;
-    font-family: "Open Sans";
+    margin-top: 10%;
+    font-family: cursive;
     font-weight: 600;
-    font-size: 18pt;
-    color: #777;
+    font-size: 50pt;
+    color: white;
+    text-shadow: -1px 2px 2px #000;
   }
   
   .info {
-    margin-top: -5px;
+    margin-top: -50px;
     margin-bottom: 5px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 18pt;
-    color: #aaa;
+    font-size: 20pt;
+    color: white;
+    text-shadow: -1px 2px 2px #000;
   }
   
   .stats {
     margin-top: 25px;
-    text-align: center;
     padding-bottom: 20px;
     border-bottom: 1px solid #ededed;
     font-family: 'Montserrat', sans-serif;
@@ -87,28 +88,20 @@ html,body {
   
   
   .number-stat {
-    padding: 0px;
-    font-size: 18pt;
+    margin-top: 25px;
+    font-size: 30pt;
     font-weight: bold;
     font-family: 'Montserrat', sans-serif;
-    color: #aaa;
+    color: white;
+    text-shadow: -1px 2px 2px #000;
   }
   
   .desc-stat {
-    margin-top: 5px;
-    font-size: 14pt;
-    color: #bbb;
-  }
-  
-  .desc {
-    text-align: center;
-    margin-top: 25px;
-    margin: 25px 40px;
-    color: #999;
-    font-size: 18pt;
-    font-family: "Open Sans";
-    padding-bottom: 25px;
-    border-bottom: 1px solid #ededed;
+    margin-top: 20px;
+    font-size: 24pt;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: -1px 2px 2px #000;
   }
   
   .right {
@@ -146,7 +139,6 @@ html,body {
   }
 
   #logoutForm button {
-    float: right;
     color: #494949;
     text-transform: uppercase;
     text-decoration: none;
@@ -167,4 +159,24 @@ html,body {
 
 #infoContainer {
   clear: both;
+}
+
+#upload button {
+    float:  center;
+    color: #494949;
+    text-transform: uppercase;
+    text-decoration: none;
+    background: #ffffff;
+    padding: 20px;
+    border: 4px solid #494949;
+    display: inline-block;
+    transition: all 0.4s ease 0s;
+  }
+
+#upload button:hover {
+  color: #ffffff;
+  background: #808080;
+  border-color: #808080;
+  transition: all 0.4s ease 0s;
+  cursor: pointer;
 }
