@@ -4,60 +4,73 @@
     <head>
         <meta charset="utf-8">
         <link href="css/profile.css" rel="stylesheet">
-        <title>Profile</title>
+        <title>Fractal Team Profile Page</title>
     </head>
 
     <body>
+        
+        <script src="js/index.js"></script>
+        
         <div class="container">
-                <header>
-                  <i class="fa fa-bars" aria-hidden="true"></i>
-                </header>
-                <main>
-                  <form action="/logout?_method=DELETE" method="POST" id="logoutForm">
-                      <button type="submit">Log Out</button>
-                  </form>
-                  <div class="row">
-                    <div class="left col-lg-4" id="infoContainer">
-                      <div class="photo-left">
-                      </div>
-                      <h4 class="name">Kenny Mejia</h4>
-                      <p class="info">Software Developer</p>
-                      <p class="info">kenny.mejia1@marist.edu</p>
-                      <div class="stats row">
-                        <div class="stat col-xs-4">
-                          <div class="number-stat">6</div>
-                          <div class="desc-stat">Uploads</div>
-                        </div>
-                      </div>
-                      <p class="desc">Hi ! My name is Kenny Mejia Im A CS Student.</p>
+            
+            <header>
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </header>
+            
+            <main>
+                <form action="/logout?_method=DELETE" method="POST" id="logoutForm">
+                    <button type="submit">Log Out</button>
+                </form>  
+                
+                <div class="row">
+                    <div class="left col-lg-4">
+                        <h4 class="name">Marist Student</h4>
+                        <p class="info">student1337@marist.edu</p>
+                        <div class="number-stat">6</div>
+                        <div class="desc-stat">Uploads</div>
                     </div>
-                    <div class="right col-lg-8">
-                      <div class="nav">
-                            Gallery
-                      </div>
+                </div>
+                
+                <div class="right col-lg-8">
+                    
+                    <div class="nav">
+                        <form action="/upload" id="upload">
+                            <button type="submit">Lets Upload!</button>
+                        </form>  
+                    </div>
+                    
+                    <div class="nav">
+                        Gallery
+                    </div>
+                    
+                    <div class="gallery">
                         <div class="gallery">
-                            <div class="gallery">
                             <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774813-photo4.jpg"/>
-                            </div>
-                            <div class="gallery">
-                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774814-photo5.jpg"/>
-                            </div>
-                            <div class="gallery">
-                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774814-photo6.jpg"/>
-                            </div>
-                            <div class="gallery">
-                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774817-photo1.jpg"/>
-                            </div>
-                            <div class="gallery">
-                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774815-photo2.jpg"/>
-                            </div>
-                            <div class="gallery">
-                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774816-photo3.jpg"/>
-                            </div>
                         </div>
+                        <div class="gallery">
+                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774814-photo5.jpg"/>
+                        </div>
+                        <div class="gallery">
+                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774814-photo6.jpg"/>
+                        </div>
+                        <div class="gallery">
+                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774817-photo1.jpg"/>
+                        </div>
+                        <div class="gallery">
+                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774815-photo2.jpg"/>
+                        </div>
+                        <div class="gallery">
+                            <img src="https://image.noelshack.com/fichiers/2017/38/2/1505774816-photo3.jpg"/>    
+                        </div>
+                    
                     </div>
-                </main>
-              </div>
+                
+                </div>
+            
+            </main>
+
+        </div>
+    
     </body>
 
 </html>
