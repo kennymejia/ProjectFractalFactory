@@ -52,6 +52,14 @@ html,body {
     justify-content: center;
     flex-direction: column;
   }
+
+  #statistics {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: white;
+  }
   
   .photo {
     width: 200px;
@@ -136,6 +144,11 @@ html,body {
     max-width: 100%;
     left: 50%;
     top: 50%;
+  }
+
+  .gallery .info {
+    text-align: center;
+    padding-top: 20px;
   }
 
   #logoutForm button {

@@ -9,7 +9,7 @@
 
     <body>
         
-        <script src="js/index.js"></script>
+        <script src="js/profile.js"></script>
         
         <div class="container">
                 <header>
@@ -20,6 +20,15 @@
                   <form action="/logout?_method=DELETE" method="POST" id="logoutForm">
                       <button type="submit">Log Out</button>
                   </form>
+
+                  <% if(statistics) {%>
+                      <div id="statistics">
+                          <h2>Application Statistics</h2>
+                          <% for (let [key, value] of Object.entries(statistics) ) { %>
+                          <div class="statistic"><%=key%>: <%=value%></div>
+                          <%}%>
+                      </div>
+                  <%}%>
                   
                   <div class="row">
                       <div class="left col-lg-4">

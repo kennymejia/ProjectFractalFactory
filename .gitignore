@@ -4,6 +4,7 @@ server/logs/*
 .idea/
 server/sourcePaintingExamples/
 server/paintingExamples/
+server/uploads/
 server/blockFileExamples/
 
 
