@@ -239,12 +239,12 @@ module.exports = {
         }
     },
 
-    addUserSourceFile: async (userId, fractalDimension) => {
+    addUserSourceFile: async (userId) => {
         try {
             let result = await module.exports.query(`INSERT INTO user_source_files
-                                               (user_id, fractal_dimension)
-                                               VALUES ($1, $2) RETURNING user_source_file_id`,
-                                    [userId, fractalDimension]);
+                                               (user_id)
+                                               VALUES ($1) RETURNING user_source_file_id`,
+                                    [userId]);
             return result.rows[0].user_source_file_id;
         } catch(e) {
             console.log(e);
@@ -259,6 +259,19 @@ module.exports = {
             let result = await module.exports.query(`UPDATE paintings SET file_location = $1,
                                                     date_last_updated = NOW()
                                                     WHERE painting_id = $2`,[fileLocation, paintingId]);
+            return result;
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updateUserSourceFileLocation: async (userSourceFileId, fileLocation) => {
+        try {
+            let result = await module.exports.query(`UPDATE user_source_files SET file_location = $1,
+                                                    date_last_updated = NOW()
+                                                    WHERE user_source_file_id = $2`,
+                                         [fileLocation, userSourceFileId]);
             return result;
         } catch(e) {
             console.log(e);

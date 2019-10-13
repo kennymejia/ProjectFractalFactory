@@ -4,7 +4,6 @@
     <head>
         <meta charset="utf-8">
         <link href="css/upload.css" rel="stylesheet">
-        
         <title>Fractal Team Upload Page</title>
     </head>
 
@@ -23,10 +22,12 @@
                 <input class="custom-file-input" type="file" name="upload">
                 <input class="form-submit-button" type="submit" name="submit">
             </form>
-            
-            <textarea id="inputTextToSave" class="textBoxCode" 
-                placeholder="Paste Code Here..." cols="92" rows="20"></textarea>
-            <td><button class="textAreaSubmit" onclick="saveTextAsFile()">Submit Text Area</button></td>
+
+            <form action="/uploadText" method="post">
+                <textarea id="inputTextToSave" class="textBoxCode" name="text"
+                    placeholder="Paste Code Here..." cols="92" rows="20"></textarea>
+                <td><button class="textAreaSubmit" type="submit">Submit Text Area</button></td>
+            </form>
 
         </div>
 

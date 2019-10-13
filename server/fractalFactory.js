@@ -13,6 +13,7 @@ const bodyParser = require('body-parser');
 const initializePassport = require('./passport-config');
 const formidable = require('formidable');
 const fs = require('fs');
+const fsp = require('fs').promises;
 
 // Initialize passport with some database functions for authentication
 initializePassport.initialize(
@@ -100,8 +101,68 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     }
 });
 
+// Upload source code from file -- served to the url of the page that it is on
+app.post('/upload', checkAuthenticated, async (req, res) => {
+    let user = await req.user;
+
+    // Make entry in database for user source file
+    let userSourceFileId = await provider.addUserSourceFile(user.user_id);
+
+    // Create user source file
+    let filePath = `${process.env.USERSOURCEFILEDIRECTORY}/${userSourceFileId}.txt`;
+    let form = new formidable.IncomingForm();
+    form.maxFileSize = 10 * 1024 * 1024;
+
+    form.parse(req);
+    form.on('fileBegin', (name, file) => {
+        file.path = filePath;
+    });
+
+    form.on('file', async (name, file) => {
+        // Update entry in database with file location
+        await provider.updateUserSourceFileLocation(userSourceFileId, filePath);
+
+        // TODO Calculate fractal dimension
+
+        // TODO Redirect to choosing 3 paintings page
+
+        // TODO Security with file permissions
+        res.redirect('/profile');
+    });
+});
+
+// Upload source code from text
+app.post('/uploadText', checkAuthenticated, async (req, res) => {
+    try {
+        let user = await req.user;
+
+        // Make entry in database for user source file
+        let userSourceFileId = await provider.addUserSourceFile(user.user_id);
+
+        // Create user source file
+        let filePath = `${process.env.USERSOURCEFILEDIRECTORY}/${userSourceFileId}.txt`;
+        await fsp.writeFile(filePath, req.body.text);
+
+        // Update entry in database with file location
+        await provider.updateUserSourceFileLocation(userSourceFileId, filePath);
+
+        // TODO Calculate fractal dimension
+
+        // TODO Redirect to choosing 3 paintings page
+
+        // TODO Security with file permissions
+        res.redirect('/profile');
+    } catch(e) {
+        console.log(e);
+        logController.logger.error(e);
+
+        // Redirect back to register page if problem
+        res.redirect('/profile');
+    }
+});
+
 // Log a user out
-app.delete('/logout', (req, res) => {
+app.delete('/logout', checkAuthenticated, (req, res) => {
     req.logOut(); // Setup by passport
     res.redirect('/');
 });
@@ -161,21 +222,6 @@ function checkNotAuthenticated(req, res, next) {
     }
     next();
 }
-
-app.post('/upload', function (req, res){
-    var form = new formidable.IncomingForm();
-    form.maxFileSize = 10 * 1024 * 1024;
-
-    form.parse(req);
-    form.on('fileBegin', function (name, file){
-        file.path = __dirname + '/uploads/' + file.name;
-    });
-
-    form.on('file', function (name, file){
-        console.log('Uploaded ' + file.name);
-        res.redirect('/');
-    });
-});
 
 ////////////////////// Port Listening //////////////////////
 app.listen(process.env.PORT, () => {

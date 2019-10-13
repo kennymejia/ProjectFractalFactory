@@ -1,5 +1,5 @@
 function saveTextAsFile()
-{
+{ // TODO May use something like this later, but not here
 	var textToWrite = document.getElementById("inputTextToSave").value;
 	var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
     var fileNum = 0;
