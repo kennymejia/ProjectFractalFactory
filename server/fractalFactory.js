@@ -78,7 +78,7 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 // Register new user with provided details
 app.post('/register', checkNotAuthenticated, async (req, res) => {
     try {
-        let hashedPassword = await bcrypt.hash(req.body.password, 10);
+        let hashedPassword = await bcrypt.hash(req.body.password, 15);
 
         // Create user of account type 'default'
         await provider.addUser(req.body.username, hashedPassword, 'default');
@@ -110,6 +110,22 @@ app.get('/user-painting/:id', checkAuthenticated, async (req, res) => {
 
         if (userPaintingLocation) {
             res.sendFile(userPaintingLocation);
+        }
+    } catch(e) {
+        console.log(e);
+        logController.logger.error(e);
+    }
+});
+
+// Get a painting
+app.get('/painting/:id', checkAuthenticated, async (req, res) => {
+    try {
+        let paintingId = req.params.id;
+
+        let paintingLocation = await provider.getPaintingLocation(paintingId);
+
+        if (paintingLocation) {
+            res.sendFile(paintingLocation);
         }
     } catch(e) {
         console.log(e);

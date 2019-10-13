@@ -171,6 +171,33 @@ module.exports = {
         }
     },
 
+    getStatistics: async () => {
+        try {
+            let statistics = {"Number of Users": 0,
+                              "Number of User Paintings": 0,
+                              "Number of Paintings": 0,
+                              "Number of User Source Files": 0};
+
+            let result;
+            result = await module.exports.query('SELECT COUNT(*) FROM users');
+            statistics["Number of Users"] = result.rows[0].count;
+
+            result = await module.exports.query('SELECT COUNT(*) FROM user_paintings');
+            statistics["Number of User Paintings"] = result.rows[0].count;
+
+            result = await module.exports.query('SELECT COUNT(*) FROM paintings');
+            statistics["Number of Paintings"] = result.rows[0].count;
+
+            result = await module.exports.query('SELECT COUNT(*) FROM user_source_files');
+            statistics["Number of User Source Files"] = result.rows[0].count;
+
+            return statistics;
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
     ////////////////////// Add Data //////////////////////
 
     addUser: async (userAccount, password, accountType) => {
@@ -232,6 +259,18 @@ module.exports = {
             let result = await module.exports.query(`UPDATE paintings SET file_location = $1,
                                                     date_last_updated = NOW()
                                                     WHERE painting_id = $2`,[fileLocation, paintingId]);
+            return result;
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updateLoginDate: async (userId) => {
+        try {
+            let result = await module.exports.query(`UPDATE users SET last_login = NOW(),
+                                                    date_last_updated = NOW()
+                                                    WHERE user_id = $1`,[userId]);
             return result;
         } catch(e) {
             console.log(e);

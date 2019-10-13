@@ -62,7 +62,8 @@ var fillDatabase = async paintings => {
         // TODO Calculate fractal dimension
         let fractalDimension = 1.5;
         let paintingId = await provider.addPainting(fractalDimension, painting.name,
-                                                painting.painter, painting.yearCreated);
+                                            painting.painter || "Unidentified Artist",
+                                                    painting.yearCreated);
 
         let filePath = `${process.env.PAINTINGDIRECTORY}/${paintingId}.jpg`;
         saveImageToDisk(painting.link, filePath);
@@ -77,3 +78,4 @@ var main = async () => {
 };
 
 main();
+provider.getStatistics();
