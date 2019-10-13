@@ -1,0 +1,143 @@
+html {
+    background:
+        /* top, transparent black, faked with gradient */
+            linear-gradient(
+                    rgba(0, 0, 0, 0.8),
+                    rgba(0, 0, 0, 0.8)
+            ),
+            url(../images/fractalSplash.jpg)
+            no-repeat
+            fixed
+            center
+            center;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.centerDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.ff {
+    color:white;
+    font-family: cursive;
+    font-weight: 900;
+    font-size: 500%;
+    text-shadow: -1px 2px 2px #000;
+    margin-bottom: 30px;
+    margin-top: 50px;
+}
+
+.textBoxCode {
+    margin-top: 4%;
+    border: 2px solid black;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: darkgray;
+    background-position: 10px 10px; 
+    background-repeat: no-repeat;
+    padding: 6px 10px 6px 20px;
+}
+.textBoxCode::placeholder {
+    color: black;
+}
+
+
+.custom-file-input::-webkit-file-upload-button {
+    visibility: hidden;
+  }
+  .custom-file-input::before {
+    content: 'Select A File';
+    display: inline-block;
+    background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 5px 8px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    cursor: pointer;
+    text-shadow: 1px 1px #fff;
+    font-weight: 700;
+    font-size: 10pt;
+    margin-top: 2%;
+  }
+  .custom-file-input:hover::before {
+    border-color: black;
+  }
+  .custom-file-input:active::before {
+    background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+  }
+
+.form-submit-button {
+    display: inline-block;
+    background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 5px 8px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    cursor: pointer;
+    text-shadow: 1px 1px #fff;
+    font-weight: 700;
+    font-size: 10pt;
+}
+.form-submit-button:hover::before {
+    border-color: black;
+}
+.form-submit-button:active::before {
+    background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+  }
+
+.textAreaSubmit {
+    display: inline-block;
+    background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 5px 8px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    cursor: pointer;
+    text-shadow: 1px 1px #fff;
+    font-weight: 700;
+    font-size: 10pt;
+    margin-top: 15px;
+}
+.textAreaSubmit:hover::before {
+    border-color: black;
+}
+
+.textAreaSubmit:active::before {
+    background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+
+#infoContainer {
+    clear: both;
+}
+  
+#profile button {
+    color: #494949;
+    text-transform: uppercase;
+    text-decoration: none;
+    background: #ffffff;
+    padding: 20px;
+    border: 4px solid #494949;
+    display: inline-block;
+    transition: all 0.4s ease 0s;
+}
+  
+#profile button:hover {
+    color: #ffffff;
+    background: #808080;
+    border-color: #808080;
+    transition: all 0.4s ease 0s;
+    cursor: pointer;
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <link href="css/upload.css" rel="stylesheet">
+        
+        <title>Fractal Team Upload Page</title>
+    </head>
+
+    <body>
+        
+        <script src="js/upload.js"></script>
+
+        <form action="/profile" id="profile">
+            <button type="submit">Back To Profile</button>
+        </form>
+
+        <div class="centerDiv">
+            <h2 class="ff">Fractal Factory Upload</h2>
+
+            <form enctype="multipart/form-data" method="post">
+                <input class="custom-file-input" type="file" name="upload">
+                <input class="form-submit-button" type="submit" name="submit">
+            </form>
+            
+            <textarea id="inputTextToSave" class="textBoxCode" 
+                placeholder="Paste Code Here..." cols="92" rows="20"></textarea>
+            <td><button class="textAreaSubmit" onclick="saveTextAsFile()">Submit Text Area</button></td>
+
+        </div>
+
+    </body>
+
+</html>

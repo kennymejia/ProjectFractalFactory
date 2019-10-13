@@ -11,6 +11,8 @@ const session = require('express-session');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const initializePassport = require('./passport-config');
+const formidable = require('formidable');
+const fs = require('fs');
 
 // Initialize passport with some database functions for authentication
 initializePassport.initialize(
@@ -63,6 +65,10 @@ app.get('/about', (req,res) => {
 
 app.get('/results', checkAuthenticated, (req,res) => {
     res.render('results.ejs');
+});
+
+app.get('/upload', checkAuthenticated, function (req,res) {
+    res.render('upload.ejs');
 });
 
 
@@ -156,8 +162,24 @@ function checkNotAuthenticated(req, res, next) {
     next();
 }
 
+app.post('/upload', function (req, res){
+    var form = new formidable.IncomingForm();
+    form.maxFileSize = 10 * 1024 * 1024;
+
+    form.parse(req);
+    form.on('fileBegin', function (name, file){
+        file.path = __dirname + '/uploads/' + file.name;
+    });
+
+    form.on('file', function (name, file){
+        console.log('Uploaded ' + file.name);
+        res.redirect('/');
+    });
+});
+
 ////////////////////// Port Listening //////////////////////
 app.listen(process.env.PORT, () => {
 	console.log(`fractalFactory is running on port ${process.env.PORT}`);
 	logController.logger.info(`fractalFactory is running on port ${process.env.PORT}`);
 });
+
