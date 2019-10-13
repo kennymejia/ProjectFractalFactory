@@ -17,7 +17,7 @@ const fs = require('fs');
 // Initialize passport with some database functions for authentication
 initializePassport.initialize(
     passport,
-    async username => await provider.getUserByUsername(username),
+    async username => await provider.getUserByAccount(username),
     async id => await provider.getUserById(id)
 );
 
@@ -45,15 +45,25 @@ app.get('/', checkNotAuthenticated, (req, res) => {
     res.render('login.ejs');
 });
 
-app.get('/profile', checkAuthenticated, function (req,res) {
-    res.render('profile.ejs');
+app.get('/profile', checkAuthenticated, async (req,res) => {
+    // Get list of user painting ids -- pass to ejs
+    let userPaintingIds = [];
+    try {
+        let user = await req.user;
+        userPaintingIds = await provider.getUserPaintingIds(user.user_id);
+    } catch(e) {
+        console.log(e);
+        logController.logger.error(e);
+    }
+
+    res.render('profile.ejs', { userPaintings: userPaintingIds});
 });
 
-app.get('/about', checkNotAuthenticated, function (req,res) {
+app.get('/about', (req,res) => {
     res.render('about.ejs');
 });
 
-app.get('/results', checkAuthenticated, function (req,res) {
+app.get('/results', checkAuthenticated, (req,res) => {
     res.render('results.ejs');
 });
 
@@ -63,6 +73,7 @@ app.get('/upload', checkAuthenticated, function (req,res) {
 
 
 //////////////////////  Data routing //////////////////////
+
 // Either log in a user with an account or deny access
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
     successRedirect: '/profile',
@@ -73,7 +84,7 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 // Register new user with provided details
 app.post('/register', checkNotAuthenticated, async (req, res) => {
     try {
-        let hashedPassword = await bcrypt.hash(req.body.password, 10);
+        let hashedPassword = await bcrypt.hash(req.body.password, 15);
 
         // Create user of account type 'default'
         await provider.addUser(req.body.username, hashedPassword, 'default');
@@ -95,11 +106,33 @@ app.delete('/logout', (req, res) => {
     res.redirect('/');
 });
 
-// Get user paintings
-app.get('/userPaintings', checkAuthenticated, async (req, res) => {
+// Get a user painting
+app.get('/user-painting/:id', checkAuthenticated, async (req, res) => {
     try {
-        console.log(req);
-        // let userPaintingsInfo = provider.getUserPaintingsInfo()
+        let user = await req.user; // Make sure it is a painting associated with requesting user
+        let userPaintingId = req.params.id;
+
+        let userPaintingLocation = await provider.getUserPaintingLocation(user.user_id, userPaintingId);
+
+        if (userPaintingLocation) {
+            res.sendFile(userPaintingLocation);
+        }
+    } catch(e) {
+        console.log(e);
+        logController.logger.error(e);
+    }
+});
+
+// Get a painting
+app.get('/painting/:id', checkAuthenticated, async (req, res) => {
+    try {
+        let paintingId = req.params.id;
+
+        let paintingLocation = await provider.getPaintingLocation(paintingId);
+
+        if (paintingLocation) {
+            res.sendFile(paintingLocation);
+        }
     } catch(e) {
         console.log(e);
         logController.logger.error(e);
@@ -107,7 +140,7 @@ app.get('/userPaintings', checkAuthenticated, async (req, res) => {
 });
 
 // Simple 404 page
-app.get('*', function(req, res){
+app.get('*', function(req, res) {
     res.status(404).send('404 Error -- The droids you are looking for are not here');
 });
 

@@ -15,7 +15,7 @@ CREATE TABLE users(
 
 CREATE TABLE paintings(
 	painting_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    file_location VARCHAR(250) NOT NULL,
+    file_location VARCHAR(250),
 	fractal_dimension NUMERIC(5, 3), -- Null means it needs to be calculated
 	-- Metadata for painting may be null ... be aware of this on front-end
 	name VARCHAR(150),
@@ -29,7 +29,7 @@ CREATE TABLE paintings(
 CREATE TABLE user_source_files(
    user_source_file_id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
    user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT, -- Referential integrity constraint
-   file_location VARCHAR(250) NOT NULL,
+   file_location VARCHAR(250),
    fractal_dimension NUMERIC(5, 3), -- Null means it needs to be calculated
    date_added TIMESTAMP DEFAULT NOW() NOT NULL,
    date_last_updated TIMESTAMP DEFAULT NOW() NOT NULL
@@ -40,7 +40,7 @@ CREATE TABLE user_paintings(
 	painting_id UUID NOT NULL REFERENCES paintings(painting_id) ON DELETE RESTRICT, -- Referential integrity constraint
 	user_source_file_id UUID NOT NULL REFERENCES user_source_files(user_source_file_id) ON DELETE RESTRICT, -- Referential integrity constraint
 	user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT, -- Referential integrity constraint
-	file_location VARCHAR(250) NOT NULL,
+	file_location VARCHAR(250),
 	watermark_flag BOOLEAN DEFAULT 't' NOT NULL,
 	date_added TIMESTAMP DEFAULT NOW() NOT NULL,
     date_last_updated TIMESTAMP DEFAULT NOW() NOT NULL
