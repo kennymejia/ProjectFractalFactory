@@ -29,7 +29,7 @@ var fetchPaintings = async amount => {
 
   for(let i = 0; i < amount; i++){
      try {
-        let index = Math.floor(Math.random() * objectsJson.total); console.log(index);
+        let index = Math.floor(Math.random() * objectsJson.total);
         paintingsResult = await fetch(`${baseUrl}/objects/${objectsJson.objectIDs[index]}`);
         paintingsJson = await paintingsResult.json();
 
@@ -78,4 +78,3 @@ var main = async () => {
 };
 
 main();
-provider.getStatistics();
