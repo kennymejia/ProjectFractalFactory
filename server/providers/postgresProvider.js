@@ -27,7 +27,6 @@ module.exports = {
 			client.release();
 			
 			return res;
-			
 		}catch(e){
             console.log(e);
 			logController.logger.error(e);
@@ -142,6 +141,19 @@ module.exports = {
         }
     },
 
+    getPaintingMetadata: async paintingId => {
+        try {
+            let result = await module.exports.query(`SELECT name, painter, year_created FROM paintings 
+                                                    WHERE painting_id = $1`,
+                                         [paintingId]);
+
+            return result.rows[0] || {};
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
     getUserSourceFileIds: async userId => {
         try {
             let result = await module.exports.query(`SELECT user_source_file_id
@@ -165,6 +177,92 @@ module.exports = {
             } else {
                 return null;
             }
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    getUserSourceFileFractalDimension: async userSourceFileId => {
+        try {
+            let result = await module.exports.query(`SELECT fractal_dimension FROM user_source_files 
+                                               WHERE user_source_file_id = $1`,
+                                    [userSourceFileId]);
+
+            return result.rows[0].fractal_dimension || 1; // If no fractal dimension, default to 1
+
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    getHeatmapData: async () => {
+        try {
+            let result = await module.exports.query(`SELECT date_added FROM user_source_files ORDER BY date_added`);
+
+            // Get number of rows occurring in specified hours within a week period
+            let totalHours = {};
+            let cnt = 0;
+            for(let d=0; d<7; d++){
+                for (let h=0; h<24; h++) {
+                    totalHours[cnt] = 0;
+                    cnt++;
+                }
+            }
+
+            let day;
+            let hour;
+            for (let row of result.rows) {
+                day = row.date_added.getDay();
+                hour = row.date_added.getHours();
+                totalHours[(day*24) + hour] = totalHours[(day*24) + hour] + 1;
+            }
+
+            // Format dates as day, hour, and # of occurrences
+            let dataUseAll =[];
+            cnt = 0;
+            for(let d=0; d<7; d++){
+                for (let h=0; h<24; h++) {
+                    dataUseAll.push({day: d+1, hour: h+1, value: totalHours[cnt]});
+                    cnt++;
+                }
+            }
+
+            // Clear object
+            totalHours = {};
+            cnt = 0;
+            for(let d=0; d<7; d++){
+                for (let h=0; h<24; h++) {
+                    totalHours[cnt] = 0;
+                    cnt++;
+                }
+            }
+
+            // Get rows that were added in the past week
+            result = await module.exports.query(`SELECT date_added FROM user_source_files
+                                          WHERE date_added > NOW() - interval '7 days'
+                                          ORDER BY date_added`);
+
+            day;
+            hour;
+            for (let row of result.rows) {
+                day = row.date_added.getDay();
+                hour = row.date_added.getHours();
+                totalHours[(day*24) + hour] = totalHours[(day*24) + hour] + 1;
+            }
+
+            // Format dates as day, hour, and # of occurrences for last 7 days
+            let dataUseWeek =[];
+            cnt = 0;
+            for(let d=0; d<7; d++){
+                for (let h=0; h<24; h++) {
+                    dataUseWeek.push({day: d+1, hour: h+1, value: totalHours[cnt]});
+                    cnt++;
+                }
+            }
+
+            return [dataUseAll, dataUseWeek];
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -272,6 +370,19 @@ module.exports = {
                                                     date_last_updated = NOW()
                                                     WHERE user_source_file_id = $2`,
                                          [fileLocation, userSourceFileId]);
+            return result;
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updateUserSourceFractalDimension: async (userSourceFileId, fractalDimension) => {
+        try {
+            let result = await module.exports.query(`UPDATE user_source_files SET fractal_dimension = $1,
+                                                    date_last_updated = NOW()
+                                                    WHERE user_source_file_id = $2`,
+                [fractalDimension, userSourceFileId]);
             return result;
         } catch(e) {
             console.log(e);

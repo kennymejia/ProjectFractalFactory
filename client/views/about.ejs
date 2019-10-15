@@ -3,61 +3,30 @@
 
     <head>
         <meta charset="utf-8">
-        <link href="css/index.css" rel="stylesheet">
-        
         <title>Fractal Factory Landing Page</title>
+
+        <link href="css/about.css" rel="stylesheet">
+        <script src="js/about.js"></script>
     </head>
 
     <body>
-        
-        <script src="js/index.js"></script>
-
-        <h2 class="ff">Fractal Team Login</h2>
-
-        <button class = "btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
-
-        <div id="id01" class="modal">
-        
-        <form class="modal-content animate" action="/action_page.php" method="post">
-            <div class="imgcontainer">
-            <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
-            <img src="img_avatar2.png" alt="Avatar" class="avatar">
-            </div>
-
-            <div class="container">
-            <label for="uname"><b>Username</b></label>
-            <input type="text" placeholder="Enter Username" name="uname" required>
-
-            <label for="psw"><b>Password</b></label>
-            <input type="password" placeholder="Enter Password" name="psw" required>
-                
-            <button type="submit">Login</button>
-            <label>
-                <input type="checkbox" checked="checked" name="remember"> Remember me
-            </label>
-            </div>
-
-            <div class="container" style="background-color:#f1f1f1">
-            <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
-            <span class="psw">Forgot <a href="#">password?</a></span>
-            </div>
+        <form action="/" method="GET">
+            <button class="btn" type="submit">Back</button>
         </form>
+
+        <div class="centerDiv">
+            <h2 class="ff">Fractal Factory: About Us</h2>
+
+            <img src="images/fractal.jpg" id="fractalImg"/>
+
+            <p>&emsp;Fractal Factory was created for the purpose of a senior capping project at Marist College.
+            The team that created this application consisted of five students: Brandon Kline, Candice Rivera, Eric Stenton,
+            Kenny Mejia, and Jada Tijani while under the supervision of Dr.Pablo Rivas, an Assistant Professor of Computer
+            Science. The goal was to create a service that allows users to upload source code that our application will
+            turn into an image of blocks, calculate its fractal dimension, and match it with an existing painting in our database.
+            Once a match is found a new painting would be produced in the style of the painting that it was matched with.
+            You only need about 100 lines of code to try it out, we hope you enjoy our application!</p>
         </div>
-
-        <script>
-        // Get the modal
-        var modal = document.getElementById('id01');
-
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-        </script>
-        <div class="square"></div>
-        <img class="img" src="/images/fractalSplash.jpg" alt="Fractal Factory Splash Screen"> 
-        
 
     </body>
 

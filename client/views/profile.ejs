@@ -5,11 +5,14 @@
         <meta charset="utf-8">
         <link href="css/profile.css" rel="stylesheet">
         <title>Fractal Team Profile Page</title>
+
+
+        <script src="js/profile.js"></script>
+        <script src="https://d3js.org/d3.v3.js"></script>
     </head>
 
     <body>
-        
-        <script src="js/profile.js"></script>
+
         
         <div class="container">
                 <header>
@@ -18,12 +21,19 @@
                 
                 <main>
                   <form action="/logout?_method=DELETE" method="POST" id="logoutForm">
-                      <button type="submit">Log Out</button>
+                      <button class="btn" type="submit">Log Out</button>
+                  </form>
+                  <form action="/about" method="GET">
+                      <button class="btn" type="submit">About</button>
                   </form>
 
                   <% if(statistics) {%>
                       <div id="statistics">
                           <h2>Application Statistics</h2>
+
+                          <div id="chart"></div>
+                          <div id="dataset-picker"></div>
+
                           <% for (let [key, value] of Object.entries(statistics) ) { %>
                              <div class="statistic"><%=key%>: <%=value%></div>
                           <%}%>
