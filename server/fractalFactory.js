@@ -1,6 +1,7 @@
 const dotenv = require('dotenv');
 dotenv.config();
 const logController = require('./controllers/logController.js');
+const nn = require('./controllers/NNServerController');
 const express = require('express');
 const app = express();
 const bcrypt = require('bcrypt');
@@ -12,8 +13,11 @@ const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const initializePassport = require('./passport-config');
 const formidable = require('formidable');
-const fs = require('fs');
 const fsp = require('fs').promises;
+const {promisify} = require('util');
+const getSize = require('get-folder-size');
+const getSizeAsync = promisify(getSize);
+
 
 // Initialize passport with some database functions for authentication
 initializePassport.initialize(
@@ -57,6 +61,10 @@ app.get('/profile', checkAuthenticated, async (req,res) => {
         // Admins get to see statistics
         if (user.admin_flag) {
             statistics = await provider.getStatistics();
+
+            // Add any additional statistics
+            let size = await getSizeAsync(process.env.USERSOURCEFILEDIRECTORY);
+            statistics["Size of Source File Directory"] = (size / 1024 / 1024).toFixed(2) + ' MB';
         }
     } catch(e) {
         console.log(e);
@@ -70,11 +78,34 @@ app.get('/about', (req,res) => {
     res.render('about.ejs');
 });
 
-app.get('/results', checkAuthenticated, (req,res) => {
-    res.render('results.ejs');
+app.use('/results', express.static('client/public')); // Results/:id is a conceptual link, not a physical one
+app.get('/results/:id', checkAuthenticated, async (req,res) => {
+    let userSourceFileId = req.params.id;
+
+    // Get list of painting ids -- pass to ejs
+    let paintings = [];
+    try {
+        let fractalDimension = await provider.getUserSourceFileFractalDimension(userSourceFileId);
+
+        paintings = await provider.getPaintingIds(fractalDimension);
+
+        // Get metadata for paintings
+        let metadata;
+        for (let painting of paintings) {
+            metadata = await provider.getPaintingMetadata(painting.painting_id);
+            painting.name = metadata.name;
+            painting.painter = metadata.painter;
+            painting.year_created = metadata.year_created;
+        }
+    } catch(e) {
+        console.log(e);
+        logController.logger.error(e);
+    }
+
+    res.render('results.ejs', { paintings: paintings} );
 });
 
-app.get('/upload', checkAuthenticated, function (req,res) {
+app.get('/upload', checkAuthenticated,  (req,res) => {
     res.render('upload.ejs');
 });
 
@@ -109,32 +140,40 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 
 // Upload source code from file -- served to the url of the page that it is on
 app.post('/upload', checkAuthenticated, async (req, res) => {
-    let user = await req.user;
+    try {
+        let user = await req.user;
 
-    // Make entry in database for user source file
-    let userSourceFileId = await provider.addUserSourceFile(user.user_id);
+        // Make entry in database for user source file
+        let userSourceFileId = await provider.addUserSourceFile(user.user_id);
 
-    // Create user source file
-    let filePath = `${process.env.USERSOURCEFILEDIRECTORY}/${userSourceFileId}.txt`;
-    let form = new formidable.IncomingForm();
-    form.maxFileSize = 10 * 1024 * 1024;
+        // Create user source file
+        let filePath = `${process.env.USERSOURCEFILEDIRECTORY}/${userSourceFileId}.txt`;
+        let form = new formidable.IncomingForm();
+        form.maxFileSize = 10 * 1024 * 1024;
 
-    form.parse(req);
-    form.on('fileBegin', (name, file) => {
-        file.path = filePath;
-    });
+        form.parse(req);
+        form.on('fileBegin', (name, file) => {
+            file.path = filePath;
+        });
 
-    form.on('file', async (name, file) => {
-        // Update entry in database with file location
-        await provider.updateUserSourceFileLocation(userSourceFileId, filePath);
+        form.on('file', async (name, file) => {
+            // Update entry in database with file location
+            await provider.updateUserSourceFileLocation(userSourceFileId, filePath);
 
-        // TODO Calculate fractal dimension
+            // Update entry in database with fractal dimension
+            let fractalDimension = await nn.calculateFractalDimension(filePath);
+            await provider.updateUserSourceFractalDimension(userSourceFileId, fractalDimension);
 
-        // TODO Redirect to choosing 3 paintings page
+            // TODO Security with file permissions
+            res.redirect(`/results/${userSourceFileId}`);
+        });
+    } catch(e) {
+        console.log(e);
+        logController.logger.error(e);
 
-        // TODO Security with file permissions
+        // Redirect back to register page if problem
         res.redirect('/profile');
-    });
+    }
 });
 
 // Upload source code from text
@@ -152,12 +191,12 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
         // Update entry in database with file location
         await provider.updateUserSourceFileLocation(userSourceFileId, filePath);
 
-        // TODO Calculate fractal dimension
-
-        // TODO Redirect to choosing 3 paintings page
+        // Update entry in database with fractal dimension
+        let fractalDimension = await nn.calculateFractalDimension(filePath);
+        await provider.updateUserSourceFractalDimension(userSourceFileId, fractalDimension);
 
         // TODO Security with file permissions
-        res.redirect('/profile');
+        res.redirect(`/results/${userSourceFileId}`);
     } catch(e) {
         console.log(e);
         logController.logger.error(e);
@@ -206,6 +245,11 @@ app.get('/painting/:id', checkAuthenticated, async (req, res) => {
     }
 });
 
+app.get('/heatmap', checkAuthenticated, checkAdmin, async (req, res) => {
+    let heatmapDatasets = await provider.getHeatmapData();
+    res.send(heatmapDatasets);
+});
+
 // Simple 404 page
 app.get('*', function(req, res) {
     res.status(404).send('404 Error -- The droids you are looking for are not here');
@@ -227,6 +271,18 @@ function checkNotAuthenticated(req, res, next) {
         return res.redirect('/profile');
     }
     next();
+}
+
+// Make sure user is an admin
+async function checkAdmin (req, res, next) {
+    let user = await req.user;
+
+    if (user.admin_flag) {
+        return next();
+    }
+
+    // Send empty array back so that heatmap won't be generated for non-admin
+    res.send([]);
 }
 
 ////////////////////// Port Listening //////////////////////
