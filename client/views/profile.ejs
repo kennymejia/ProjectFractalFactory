@@ -21,7 +21,10 @@
                 
                 <main>
                   <form action="/logout?_method=DELETE" method="POST" id="logoutForm">
-                      <button type="submit">Log Out</button>
+                      <button class="btn" type="submit">Log Out</button>
+                  </form>
+                  <form action="/about" method="GET">
+                      <button class="btn" type="submit">About</button>
                   </form>
 
                   <% if(statistics) {%>

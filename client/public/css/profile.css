@@ -151,7 +151,7 @@ html,body {
     padding-top: 20px;
   }
 
-  #logoutForm button {
+.btn {
     color: #494949;
     text-transform: uppercase;
     text-decoration: none;
@@ -162,12 +162,17 @@ html,body {
     transition: all 0.4s ease 0s;
   }
 
-#logoutForm button:hover {
+.btn:hover {
   color: #ffffff;
   background: #808080;
   border-color: #808080;
   transition: all 0.4s ease 0s;
   cursor: pointer;
+}
+
+#logoutForm {
+  float: left;
+  margin-right: 10px;
 }
 
 #infoContainer {

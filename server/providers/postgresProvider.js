@@ -141,6 +141,19 @@ module.exports = {
         }
     },
 
+    getPaintingMetadata: async paintingId => {
+        try {
+            let result = await module.exports.query(`SELECT name, painter, year_created FROM paintings 
+                                                    WHERE painting_id = $1`,
+                                         [paintingId]);
+
+            return result.rows[0] || {};
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
     getUserSourceFileIds: async userId => {
         try {
             let result = await module.exports.query(`SELECT user_source_file_id
@@ -164,6 +177,20 @@ module.exports = {
             } else {
                 return null;
             }
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    getUserSourceFileFractalDimension: async userSourceFileId => {
+        try {
+            let result = await module.exports.query(`SELECT fractal_dimension FROM user_source_files 
+                                               WHERE user_source_file_id = $1`,
+                                    [userSourceFileId]);
+
+            return result.rows[0].fractal_dimension || 1; // If no fractal dimension, default to 1
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -343,6 +370,19 @@ module.exports = {
                                                     date_last_updated = NOW()
                                                     WHERE user_source_file_id = $2`,
                                          [fileLocation, userSourceFileId]);
+            return result;
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updateUserSourceFractalDimension: async (userSourceFileId, fractalDimension) => {
+        try {
+            let result = await module.exports.query(`UPDATE user_source_files SET fractal_dimension = $1,
+                                                    date_last_updated = NOW()
+                                                    WHERE user_source_file_id = $2`,
+                [fractalDimension, userSourceFileId]);
             return result;
         } catch(e) {
             console.log(e);

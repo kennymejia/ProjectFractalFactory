@@ -5,6 +5,7 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const https = require('https');
 const provider = require('./postgresProvider');
+const nn = require('../controllers/NNServerController');
 
 let baseUrl = "https://collectionapi.metmuseum.org/public/collection/v1";
 
