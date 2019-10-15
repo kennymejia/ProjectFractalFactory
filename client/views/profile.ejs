@@ -5,11 +5,14 @@
         <meta charset="utf-8">
         <link href="css/profile.css" rel="stylesheet">
         <title>Fractal Team Profile Page</title>
+
+
+        <script src="js/profile.js"></script>
+        <script src="https://d3js.org/d3.v3.js"></script>
     </head>
 
     <body>
-        
-        <script src="js/profile.js"></script>
+
         
         <div class="container">
                 <header>
@@ -24,6 +27,10 @@
                   <% if(statistics) {%>
                       <div id="statistics">
                           <h2>Application Statistics</h2>
+
+                          <div id="chart"></div>
+                          <div id="dataset-picker"></div>
+
                           <% for (let [key, value] of Object.entries(statistics) ) { %>
                              <div class="statistic"><%=key%>: <%=value%></div>
                           <%}%>

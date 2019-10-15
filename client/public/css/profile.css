@@ -175,7 +175,6 @@ html,body {
 }
 
 #upload button {
-    float:  center;
     color: #494949;
     text-transform: uppercase;
     text-decoration: none;
@@ -192,4 +191,31 @@ html,body {
   border-color: #808080;
   transition: all 0.4s ease 0s;
   cursor: pointer;
+}
+
+#chart {
+
+}
+
+#dataset-picker {
+  margin-bottom: 50px;
+}
+
+#chart rect.bordered, #dataset-picker rect.bordered {
+  stroke: #E6E6E6;
+  stroke-width:2px;
+}
+
+#chart text.mono, #dataset-picker text.mono {
+  font-size: 9pt;
+  font-family: Consolas, courier;
+  fill: #aaa;
+}
+
+#chart text.axis-workweek, #dataset-picker text.axis-workweek {
+  fill: #FF0000;
+}
+
+#chart text.axis-worktime, #dataset-picker text.axis-worktime {
+  fill: #FF0000;
 }

@@ -12,8 +12,11 @@ const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const initializePassport = require('./passport-config');
 const formidable = require('formidable');
-const fs = require('fs');
 const fsp = require('fs').promises;
+const {promisify} = require('util');
+const getSize = require('get-folder-size');
+const getSizeAsync = promisify(getSize);
+
 
 // Initialize passport with some database functions for authentication
 initializePassport.initialize(
@@ -57,6 +60,10 @@ app.get('/profile', checkAuthenticated, async (req,res) => {
         // Admins get to see statistics
         if (user.admin_flag) {
             statistics = await provider.getStatistics();
+
+            // Add any additional statistics
+            let size = await getSizeAsync(process.env.USERSOURCEFILEDIRECTORY);
+            statistics["Size of Source File Directory"] = (size / 1024 / 1024).toFixed(2) + ' MB';
         }
     } catch(e) {
         console.log(e);
@@ -206,6 +213,11 @@ app.get('/painting/:id', checkAuthenticated, async (req, res) => {
     }
 });
 
+app.get('/heatmap', checkAuthenticated, checkAdmin, async (req, res) => {
+    let heatmapDatasets = await provider.getHeatmapData();
+    res.send(heatmapDatasets);
+});
+
 // Simple 404 page
 app.get('*', function(req, res) {
     res.status(404).send('404 Error -- The droids you are looking for are not here');
@@ -227,6 +239,18 @@ function checkNotAuthenticated(req, res, next) {
         return res.redirect('/profile');
     }
     next();
+}
+
+// Make sure user is an admin
+async function checkAdmin (req, res, next) {
+    let user = await req.user;
+
+    if (user.admin_flag) {
+        return next();
+    }
+
+    // Send empty array back so that heatmap won't be generated for non-admin
+    res.send([]);
 }
 
 ////////////////////// Port Listening //////////////////////
