@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/StentonRR/Fractal-Factory#readme",
   "dependencies": {
-    "bcrypt": "^3.0.6",
+    "bcryptjs": "^2.4.3",
     "dotenv": "^8.1.0",
     "ejs": "^2.7.1",
     "errorhandler": "^1.5.1",
