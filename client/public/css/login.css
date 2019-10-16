@@ -19,10 +19,11 @@ html {
 
 .ff {
     color:white;
-    font-family: cursive;
+    font-family: 'Long Cang', cursive;
     font-weight: 900;
-    font-size: 500%;
+    font-size: 600%;
     text-align: center;
+    text-shadow: -1px 2px 2px #000;
 }
 
 .btn {
