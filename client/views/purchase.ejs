@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Fractal Factory Purchase Page</title>
+
+    <link href="css/purchase.css" rel="stylesheet">
+    <script src="js/purchase.js"></script>
+</head>
+
+<body>
+    <form action="/logout?_method=DELETE" method="POST" id="logoutForm">
+        <button type="submit">Log Out</button>
+    </form>
+
+    <form action="/profile" id="profile">
+        <button type="submit">Back To Profile</button>
+    </form>
+
+    <div id="centerDiv">
+        <h2 class="ff">Here is your painting!</h2>
+
+        <div id="paintingDiv">
+            <img src="<%=paintingLink%>"/>
+        </div>
+
+        <div id="cp-store-root" data-cp-settings='{ "access_key": "<%=canvasPopKey%>", "modal": true }'></div>
+        <script>
+            (function ( d, s, id ) {
+                var js, cpJs = d.getElementsByTagName( s )[0], t = new Date();
+                if ( d.getElementById( id ) ) return;
+                js = d.createElement( s );
+                js.id = id;
+                js.setAttribute( 'data-cp-url', 'https://store.canvaspop.com' );
+                js.src = 'https://store.canvaspop.com/static/js/cpopstore.js?bust=' + t.getTime();
+                cpJs.parentNode.insertBefore( js, cpJs );
+            }( document, 'script', 'canvaspop-jssdk' ));
+        </script>
+
+        <div id="purchaseDiv">
+            <button class="btn">Remove Watermark</button>
+            <button class="btn" data-cp-url="https://s3.amazonaws.com/canvaspop-popupstore-dev/2013/09/15/originals/516bb914bb2bf0b6fa5ddf42ebcc3993/1ffab4942c0bb66a4b509ebc60737036.JPG">
+                Buy Canvas Print
+            </button>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

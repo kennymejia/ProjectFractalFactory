@@ -109,6 +109,12 @@ app.get('/upload', checkAuthenticated,  (req,res) => {
     res.render('upload.ejs');
 });
 
+app.use('/purchase', express.static('client/public')); // purchase/:id is a conceptual link, not a physical one
+app.get('/purchase/:id', checkAuthenticated, async (req,res) => {
+    let userPaintingId = req.params.id;
+    res.render('purchase.ejs', { paintingLink: `/user-painting/${userPaintingId}`, canvasPopKey: process.env.CANVASPOPKEY} );
+});
+
 
 //////////////////////  Data routing //////////////////////
 
@@ -198,7 +204,6 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
         // TODO Security with file permissions
         res.redirect(`/results/${userSourceFileId}`);
     } catch(e) {
-        console.log(e);
         logController.logger.error(e);
 
         // Redirect back to register page if problem
@@ -210,6 +215,24 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
 app.delete('/logout', checkAuthenticated, (req, res) => {
     req.logOut(); // Setup by passport
     res.redirect('/');
+});
+
+// Create user painting
+app.get('/generate-user-painting/:userSourceFileId/:paintingId', checkAuthenticated, async (req, res) => {
+    try {
+        let user = await req.user;
+
+        let userId = user.user_id;
+        let userSourceFileId = req.params.userSourceFileId;
+        let paintingId = req.params.paintingId;
+
+        let userPaintingId = await nn.createPainting(userId, userSourceFileId, paintingId);
+
+        res.redirect(`/purchase/${userPaintingId}`);
+    } catch(e) {
+        console.log(e);
+        logController.logger.error(e);
+    }
 });
 
 // Get a user painting
@@ -245,6 +268,7 @@ app.get('/painting/:id', checkAuthenticated, async (req, res) => {
     }
 });
 
+// Get heatmap datasets
 app.get('/heatmap', checkAuthenticated, checkAdmin, async (req, res) => {
     let heatmapDatasets = await provider.getHeatmapData();
     res.send(heatmapDatasets);

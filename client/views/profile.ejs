@@ -63,7 +63,9 @@
                         <div class="gallery">
                             <% for (let i=0; i<userPaintings.length; i++) { %>
                                 <div class="gallery">
-                                    <img src="/user-painting/<%=userPaintings[i].user_painting_id%>"/>
+                                    <a href="/purchase/<%=userPaintings[i].user_painting_id%>">
+                                        <img src="/user-painting/<%=userPaintings[i].user_painting_id%>"/>
+                                    </a>
                                 </div>
                             <%}%>
 
