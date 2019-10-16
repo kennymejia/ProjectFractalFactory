@@ -1,6 +1,6 @@
 const logController = require('./controllers/logController.js');
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const provider = require('./providers/postgresProvider');
 
 module.exports.initialize = function (passport, getUserByAccount, getUserById) {
