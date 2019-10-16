@@ -71,9 +71,9 @@ html,body {
     
   .name {
     margin-top: 10%;
-    font-family: cursive;
+    font-family: 'Long Cang', cursive;
     font-weight: 600;
-    font-size: 50pt;
+    font-size: 80pt;
     color: white;
     text-shadow: -1px 2px 2px #000;
   }
@@ -117,17 +117,15 @@ html,body {
   }
   
   .nav {
-    text-align: center;
-  }
-  
-  .nav {
     margin: 40px 30px 0 10px;
     font-size: 18pt;
     text-transform: uppercase;
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
-    color: #888;
+    color: white;
     text-align: center;
+    text-shadow: -1px 2px 2px #000;
+    margin-bottom: 80px;
   }
     
   .gallery  {
