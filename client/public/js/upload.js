@@ -1,37 +1,34 @@
-function saveTextAsFile()
-{ // TODO May use something like this later, but not here
-	var textToWrite = document.getElementById("inputTextToSave").value;
-	var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
-    var fileNum = 0;
-    fileNum++;
-    var fileNameToSaveAs = "file"+fileNum;
+var displayLoading = msg => {
+	// Create loading display
+	let loadingDiv = document.createElement("div");
+	loadingDiv.id = 'loadingDiv';
 
-	var downloadLink = document.createElement("a");
-	downloadLink.download = fileNameToSaveAs;
-	downloadLink.innerHTML = "Download File";
-	if (window.webkitURL != null)
-	{
-		// Chrome allows the link to be clicked
-		// without actually adding it to the DOM.
-		downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
-	}
-	else
-	{
-		// Firefox requires the link to be added to the DOM
-		// before it can be clicked.
-		downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
-		downloadLink.onclick = destroyClickedElement;
-		downloadLink.style.display = "none";
-		document.body.appendChild(downloadLink);
-	}
+	// Create loading gif
+	let loadingSymbol = document.createElement("img");
+	loadingSymbol.id = 'loadingSymbol';
+	loadingSymbol.src = '/images/dodecahedron.gif';
 
-	downloadLink.click();
-}
+	// Create loading stage description
+	let loadingStage = document.createElement("div");
+	loadingStage.id = 'loadingStage';
+	loadingStage.innerHTML = msg;
 
-function destroyClickedElement(event)
-{
-	document.body.removeChild(event.target);
-}
+	// Append children to html
+	loadingDiv.appendChild(loadingSymbol);
+	loadingDiv.appendChild(loadingStage);
+
+	// Hide elements
+	let uploadTextForm = document.getElementById('fileForm');
+	let uploadFileForm = document.getElementById('textForm');
+	let ffTitle = document.getElementsByClassName('ff')[0];
+	uploadFileForm.style.display = 'none';
+	uploadTextForm.style.display = 'none';
+	ffTitle.style.display = 'none';
+
+	// Append loading display
+	let centerDiv = document.getElementsByClassName('centerDiv')[0];
+	centerDiv.appendChild(loadingDiv);
+};
 
 
 window.addEventListener('load', (event) => {
@@ -42,5 +39,17 @@ window.addEventListener('load', (event) => {
 	input.addEventListener('change', e => {
 		let fileName = input.files[0].name;
 		inputLabel.innerHTML = fileName;
+	});
+
+	// Loading display when submit buttons clicked
+	let uploadTextBtn = document.getElementsByClassName('textAreaSubmit')[0];
+	let uploadFileBtn = document.getElementsByClassName('form-submit-button')[0];
+
+	uploadTextBtn.addEventListener('click', (e) => {
+		displayLoading('Calculating Fractal Dimension');
+	});
+
+	uploadFileBtn.addEventListener('click', (e) => {
+		displayLoading('Calculating Fractal Dimension');
 	});
 });
