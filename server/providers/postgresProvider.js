@@ -113,16 +113,33 @@ module.exports = {
     // Limit set in environment configuration -- get paintings closest to given fractal dimension
     getPaintingIds: async fractalDimension => {
         try {
+            // TODO Change this back from random after demo
+            // let result = await module.exports.query(`SELECT painting_id
+            //                                    FROM paintings ORDER BY ABS(fractal_dimension - $1)
+            //                                    LIMIT ${process.env.TOPPAINTINGNUMBER}`,
+            //                         [fractalDimension]);
             let result = await module.exports.query(`SELECT painting_id
-                                               FROM paintings ORDER BY ABS(fractal_dimension - $1) 
-                                               LIMIT ${process.env.TOPPAINTINGNUMBER}`,
-                                    [fractalDimension]);
+                                               FROM paintings ORDER BY RANDOM()
+                                               LIMIT ${process.env.TOPPAINTINGNUMBER}`);
             return result.rows;
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
         }
     },
+
+    getRandomPaintingId: async () => {
+        try {
+            let result = await module.exports.query(`SELECT painting_id
+                                               FROM paintings ORDER BY RANDOM()
+                                               LIMIT 1`);
+            return result.rows[0].painting_id;
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
 
     getPaintingLocation: async paintingId => {
         try {
@@ -370,6 +387,18 @@ module.exports = {
                                                     date_last_updated = NOW()
                                                     WHERE user_source_file_id = $2`,
                                          [fileLocation, userSourceFileId]);
+            return result;
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updateUserPaintingFileLocation: async (userPaintingId, fileLocation) => {
+        try {
+            let result = await module.exports.query(`UPDATE user_paintings SET file_location = $1,
+                                                    date_last_updated = NOW()
+                                                    WHERE user_painting_id = $2`,[fileLocation, userPaintingId]);
             return result;
         } catch(e) {
             console.log(e);

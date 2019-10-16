@@ -1,0 +1,100 @@
+html {
+    background:
+        /* top, transparent black, faked with gradient */
+            linear-gradient(
+                    rgba(0, 0, 0, 0.8),
+                    rgba(0, 0, 0, 0.8)
+            ),
+            url(../images/fractalSplash.jpg)
+            no-repeat
+            fixed
+            center
+            center;
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.ff {
+    color:white;
+    font-family: cursive;
+    font-weight: 900;
+    font-size: 500%;
+    text-align: center;
+}
+
+.btn {
+    color: #494949;
+    text-transform: uppercase;
+    text-decoration: none;
+    background: #ffffff;
+    padding: 20px;
+    border: 4px solid #494949;
+    display: inline-block;
+    transition: all 0.4s ease 0s;
+    cursor: pointer;
+}
+
+.btn button:hover {
+    color: #ffffff;
+    background: #808080;
+    border-color: #808080;
+    transition: all 0.4s ease 0s;
+}
+
+#watermarkBtn {
+    margin-right: 30px;
+}
+
+#centerDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#profile button {
+    color: #494949;
+    text-transform: uppercase;
+    text-decoration: none;
+    background: #ffffff;
+    padding: 20px;
+    border: 4px solid #494949;
+    display: inline-block;
+    margin-left: 10px;
+    transition: all 0.4s ease 0s;
+}
+
+#profile button:hover {
+    color: #ffffff;
+    background: #808080;
+    border-color: #808080;
+    transition: all 0.4s ease 0s;
+    cursor: pointer;
+}
+
+#logoutForm button {
+    color: #494949;
+    text-transform: uppercase;
+    text-decoration: none;
+    background: #ffffff;
+    padding: 20px;
+    border: 4px solid #494949;
+    display: inline-block;
+    float: left;
+    transition: all 0.4s ease 0s;
+}
+
+#logoutForm button:hover {
+    color: #ffffff;
+    background: #808080;
+    border-color: #808080;
+    transition: all 0.4s ease 0s;
+    cursor: pointer;
+}
+
+#paintingDiv img {
+    width: 500px;
+}

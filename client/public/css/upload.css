@@ -184,3 +184,9 @@ html {
     transition: all 0.4s ease 0s;
     cursor: pointer;
 }
+
+#loadingDiv {
+    margin: 0 auto;
+    color: white;
+    text-align: center;
+}
