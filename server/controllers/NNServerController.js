@@ -1,3 +1,6 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 const {promisify} = require('util');
 const {PythonShell} = require('python-shell');
 const pythonShellRun = promisify(PythonShell.run);
@@ -6,14 +9,14 @@ const logController = require('../controllers/logController.js');
 
 module.exports = {
 
-    // TODO Implement fractal dimension calculation
-    calculateFractalDimension: async file => {
+    calculateFractalDimension: async fileLocation => {
         try {
             let options = {
-                scriptPath: './server/python',
-                args: [file]
+                scriptPath: process.env.PYTHONDIRECTORY,
+                args: [fileLocation]
             };
 
+            // Get python output in a list (should just be the fractal dimension)
             let data = await pythonShellRun('fractalDimension.py', options);
 
             return parseFloat(data[0]);
