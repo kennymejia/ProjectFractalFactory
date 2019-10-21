@@ -10,9 +10,9 @@ CREATE TABLE users(
    email TEXT NOT NULL,
    account_type TEXT NOT NULL,
    admin_flag BOOLEAN DEFAULT 'f' NOT NULL,
-   last_login TIMESTAMP DEFAULT NOW() NOT NULL,
-   date_added TIMESTAMP DEFAULT NOW() NOT NULL,
-   date_last_updated TIMESTAMP DEFAULT NOW(),
+   last_login TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+   date_added TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+   date_last_updated TIMESTAMPTZ DEFAULT NOW(),
    active_flag BOOLEAN DEFAULT 't' NOT NULL
 );
 
@@ -25,17 +25,18 @@ CREATE TABLE paintings(
 	painter TEXT,
 	year_created TEXT,
 	-- End of metadata
-	date_added TIMESTAMP DEFAULT NOW() NOT NULL,
-    date_last_updated TIMESTAMP DEFAULT NOW() NOT NULL
+	date_added TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    date_last_updated TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
 CREATE TABLE user_source_files(
    user_source_file_id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
    user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT, -- Referential integrity constraint
    file_location TEXT,
+   blocks_file_location TEXT,
    fractal_dimension NUMERIC, -- Null means it needs to be calculated
-   date_added TIMESTAMP DEFAULT NOW() NOT NULL,
-   date_last_updated TIMESTAMP DEFAULT NOW() NOT NULL
+   date_added TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+   date_last_updated TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
 CREATE TABLE user_paintings(
@@ -45,6 +46,6 @@ CREATE TABLE user_paintings(
 	user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT, -- Referential integrity constraint
 	file_location TEXT,
 	watermark_flag BOOLEAN DEFAULT 't' NOT NULL,
-	date_added TIMESTAMP DEFAULT NOW() NOT NULL,
-    date_last_updated TIMESTAMP DEFAULT NOW() NOT NULL
+	date_added TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    date_last_updated TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
