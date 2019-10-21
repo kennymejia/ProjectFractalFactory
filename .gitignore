@@ -6,7 +6,7 @@ server/sourcePaintingExamples/
 server/paintingExamples/
 server/uploads/
 server/blockFileExamples/
-
+server/python/__pycache__
 
 package-lock.json
 .env

@@ -60,16 +60,18 @@ var saveImageToDisk = (url, localPath) => {
 
 var fillDatabase = async paintings => {
     for (let painting of paintings) {
-        // TODO Calculate fractal dimension
-        let fractalDimension = 1.5;
-        let paintingId = await provider.addPainting(fractalDimension, painting.name,
+        let paintingId = await provider.addPainting(painting.name,
                                             painting.painter || "Unidentified Artist",
                                                     painting.yearCreated);
 
+        // Add file path
         let filePath = `${process.env.PAINTINGDIRECTORY}/${paintingId}.jpg`;
         saveImageToDisk(painting.link, filePath);
-
         await provider.updatePaintingFileLocation(paintingId, filePath);
+
+        // Add fractal dimension
+        let fractalDimension = await nn.calculateFractalDimension(filePath);
+        await provider.updatePaintingFractalDimension(paintingId, fractalDimension);
     }
 };
 

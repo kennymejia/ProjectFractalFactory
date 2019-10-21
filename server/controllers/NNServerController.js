@@ -1,17 +1,26 @@
+const {promisify} = require('util');
+const {PythonShell} = require('python-shell');
+const pythonShellRun = promisify(PythonShell.run);
 const provider = require('../providers/postgresProvider');
-
-async function wait(ms) {
-    return new Promise(resolve => {
-        setTimeout(resolve, ms);
-    });
-}
+const logController = require('../controllers/logController.js');
 
 module.exports = {
 
     // TODO Implement fractal dimension calculation
     calculateFractalDimension: async file => {
-       await wait(5000);
-       return 1.5;
+        try {
+            let options = {
+                scriptPath: './server/python',
+                args: [file]
+            };
+
+            let data = await pythonShellRun('fractalDimension.py', options);
+
+            return parseFloat(data[0]);
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
     },
 
     createPainting: async (userId, userSourceFileId, paintingId) => {

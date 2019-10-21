@@ -126,12 +126,14 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 }));
 
 // Register new user with provided details
+// TODO Prevent the same user account --- username specifically
 app.post('/register', checkNotAuthenticated, async (req, res) => {
     try {
-        let hashedPassword = await bcrypt.hash(req.body.password, 15);
+        let hashedPassword = await bcrypt.hash(req.body.password, 13);
 
         // Create user of account type 'default'
-        await provider.addUser(req.body.username, hashedPassword, 'default');
+        await provider.addUser(req.body.username, hashedPassword, 'default',
+                               req.body.firstname, req.body.lastname || null, req.body.email);
 
         // Redirect to login page so user can enter their details
         res.redirect('/');

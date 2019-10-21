@@ -315,12 +315,13 @@ module.exports = {
 
     ////////////////////// Add Data //////////////////////
 
-    addUser: async (userAccount, password, accountType) => {
+    addUser: async (userAccount, password, accountType, firstName, lastName, email) => {
         try {
             // Create user in database...prepared statement for sanitation
-            let result = await module.exports.query(`INSERT INTO users (user_account, password, account_type)
-                                               VALUES ($1, $2, $3) RETURNING user_id`,
-                                    [userAccount, password, accountType]);
+            let result = await module.exports.query(`INSERT INTO users (user_account, password,
+                                                    account_type, first_name, last_name, email)
+                                               VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_id`,
+                                    [userAccount, password, accountType, firstName, lastName, email]);
             return result.rows[0].user_id;
         } catch(e) {
             console.log(e);
@@ -341,12 +342,12 @@ module.exports = {
         }
     },
 
-    addPainting: async (fractalDimension, name, painter, yearCreated) => {
+    addPainting: async (name, painter, yearCreated) => {
         try {
             let result = await module.exports.query(`INSERT INTO paintings
-                                               (fractal_dimension, name, painter, year_created)
-                                               VALUES ($1, $2, $3, $4) RETURNING painting_id`,
-                                    [fractalDimension, name, painter, yearCreated]);
+                                               (name, painter, year_created)
+                                               VALUES ($1, $2, $3) RETURNING painting_id`,
+                                    [name, painter, yearCreated]);
             return result.rows[0].painting_id;
         } catch(e) {
             console.log(e);
@@ -374,6 +375,19 @@ module.exports = {
             let result = await module.exports.query(`UPDATE paintings SET file_location = $1,
                                                     date_last_updated = NOW()
                                                     WHERE painting_id = $2`,[fileLocation, paintingId]);
+            return result;
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updatePaintingFractalDimension: async (paintingId, fractalDimension) => {
+        try {
+            let result = await module.exports.query(`UPDATE paintings SET fractal_dimension = $1,
+                                                    date_last_updated = NOW()
+                                                    WHERE painting_id = $2`,
+                                         [fractalDimension, paintingId]);
             return result;
         } catch(e) {
             console.log(e);
