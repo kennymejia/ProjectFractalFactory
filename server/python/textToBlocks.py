@@ -1,3 +1,5 @@
+import sys
+import os
 import re
 from PIL import Image, ImageDraw, ImageFont
 
@@ -49,7 +51,10 @@ def textToBlocks(sourceFile, outputDirectory):
     # put the text on the image
     d.text(((W-w)/2,(H-h)/2), text, font=font, fill="white")
 
-    img = img.convert('1')
+    blocksFileLocation = outputDirectory + sourceFile.split(os.sep)[-1].split(".")[0] + ".jpg"
+    img.save(blocksFileLocation)
 
-    img.save(outputDirectory + "\\" + sourceFile.split("\\")[1].split(".")[0] + ".jpg")
-    return sourceFile
+    print(blocksFileLocation)
+
+# Execute function
+textToBlocks(sys.argv[1], sys.argv[2])

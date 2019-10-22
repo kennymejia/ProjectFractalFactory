@@ -65,11 +65,11 @@ var fillDatabase = async paintings => {
                                                     painting.yearCreated);
 
         // Add file path
-        let filePath = `${process.env.PAINTINGDIRECTORY}/${paintingId}.jpg`;
+        let filePath = `${process.env.PAINTINGDIRECTORY}${paintingId}.jpg`;
         saveImageToDisk(painting.link, filePath);
         await provider.updatePaintingFileLocation(paintingId, filePath);
 
-        // Add fractal dimension
+        // Add fractal dimension -- if null, it means the painting was not RGB format
         let fractalDimension = await nn.calculateFractalDimension(filePath);
         await provider.updatePaintingFractalDimension(paintingId, fractalDimension);
     }

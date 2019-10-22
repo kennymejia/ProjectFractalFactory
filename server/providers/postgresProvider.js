@@ -231,8 +231,8 @@ module.exports = {
             let day;
             let hour;
             for (let row of result.rows) {
-                day = row.date_added.getDay();
-                hour = row.date_added.getHours();
+                day = row.date_added.getDay()-1;
+                hour = row.date_added.getHours()-1;
                 totalHours[(day*24) + hour] = totalHours[(day*24) + hour] + 1;
             }
 
@@ -261,11 +261,9 @@ module.exports = {
                                           WHERE date_added > NOW() - interval '7 days'
                                           ORDER BY date_added`);
 
-            day;
-            hour;
             for (let row of result.rows) {
-                day = row.date_added.getDay();
-                hour = row.date_added.getHours();
+                day = row.date_added.getDay()-1;
+                hour = row.date_added.getHours()-1;
                 totalHours[(day*24) + hour] = totalHours[(day*24) + hour] + 1;
             }
 
@@ -401,6 +399,19 @@ module.exports = {
                                                     date_last_updated = NOW()
                                                     WHERE user_source_file_id = $2`,
                                          [fileLocation, userSourceFileId]);
+            return result;
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updateUserBlocksFileLocation: async (userSourceFileId, blocksFileLocation) => {
+        try {
+            let result = await module.exports.query(`UPDATE user_source_files SET blocks_file_location = $1,
+                                                    date_last_updated = NOW()
+                                                    WHERE user_source_file_id = $2`,
+                [blocksFileLocation, userSourceFileId]);
             return result;
         } catch(e) {
             console.log(e);

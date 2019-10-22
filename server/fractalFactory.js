@@ -51,11 +51,12 @@ app.get('/', checkNotAuthenticated, (req, res) => {
 });
 
 app.get('/profile', checkAuthenticated, async (req,res) => {
+    let user = await req.user;
+
     // Get list of user painting ids -- pass to ejs
     let userPaintingIds = [];
     let statistics;
     try {
-        let user = await req.user;
         userPaintingIds = await provider.getUserPaintingIds(user.user_id);
 
         // Admins get to see statistics
@@ -71,7 +72,11 @@ app.get('/profile', checkAuthenticated, async (req,res) => {
         logController.logger.error(e);
     }
 
-    res.render('profile.ejs', { userPaintings: userPaintingIds, statistics: statistics});
+    res.render('profile.ejs', { userPaintings: userPaintingIds,
+                                statistics: statistics,
+                                email: user.email,
+                                firstName: user.first_name,
+                                lastName: user.last_name});
 });
 
 app.get('/about', (req,res) => {
@@ -155,21 +160,25 @@ app.post('/upload', checkAuthenticated, async (req, res) => {
         let userSourceFileId = await provider.addUserSourceFile(user.user_id);
 
         // Create user source file
-        let filePath = `${process.env.USERSOURCEFILEDIRECTORY}/${userSourceFileId}.txt`;
+        let userSourceFileLocation = `${process.env.USERSOURCEFILEDIRECTORY}${userSourceFileId}.txt`;
         let form = new formidable.IncomingForm();
         form.maxFileSize = 10 * 1024 * 1024;
 
         form.parse(req);
         form.on('fileBegin', (name, file) => {
-            file.path = filePath;
+            file.path = userSourceFileLocation;
         });
 
         form.on('file', async (name, file) => {
             // Update entry in database with file location
-            await provider.updateUserSourceFileLocation(userSourceFileId, filePath);
+            await provider.updateUserSourceFileLocation(userSourceFileId, userSourceFileLocation);
+
+            // Create BAM/blocks file
+            let userBlocksFileLocation = await nn.createBlocks(user.user_id, userSourceFileId, userSourceFileLocation);
+            await provider.updateUserBlocksFileLocation(userSourceFileId, userBlocksFileLocation);
 
             // Update entry in database with fractal dimension
-            let fractalDimension = await nn.calculateFractalDimension(filePath);
+            let fractalDimension = await nn.calculateFractalDimension(userBlocksFileLocation);
             await provider.updateUserSourceFractalDimension(userSourceFileId, fractalDimension);
 
             // TODO Security with file permissions
@@ -193,14 +202,18 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
         let userSourceFileId = await provider.addUserSourceFile(user.user_id);
 
         // Create user source file
-        let filePath = `${process.env.USERSOURCEFILEDIRECTORY}/${userSourceFileId}.txt`;
-        await fsp.writeFile(filePath, req.body.text);
+        let userSourceFileLocation = `${process.env.USERSOURCEFILEDIRECTORY}${userSourceFileId}.txt`;
+        await fsp.writeFile(userSourceFileLocation, req.body.text);
 
         // Update entry in database with file location
-        await provider.updateUserSourceFileLocation(userSourceFileId, filePath);
+        await provider.updateUserSourceFileLocation(userSourceFileId, userSourceFileLocation);
+
+        // Create BAM/blocks file
+        let userBlocksFileLocation = await nn.createBlocks(user.user_id, userSourceFileId, userSourceFileLocation);
+        await provider.updateUserBlocksFileLocation(userSourceFileId, userBlocksFileLocation);
 
         // Update entry in database with fractal dimension
-        let fractalDimension = await nn.calculateFractalDimension(filePath);
+        let fractalDimension = await nn.calculateFractalDimension(userBlocksFileLocation);
         await provider.updateUserSourceFractalDimension(userSourceFileId, fractalDimension);
 
         // TODO Security with file permissions
