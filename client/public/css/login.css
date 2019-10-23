@@ -35,7 +35,7 @@ html {
     cursor: pointer;
     border-radius: 5px;
     display: block;
-  }
+}
 
 .centerDiv {
     display: flex;
@@ -59,7 +59,7 @@ input[type=text], input[type=password] {
     display: inline-block;
     border: 1px solid #ccc;
     box-sizing: border-box;
-  }
+}
   
 
   /* Set a style for all buttons */
@@ -71,43 +71,43 @@ input[type=text], input[type=password] {
     border: none;
     cursor: pointer;
     width: 100%;
-  }
+}
   
   button:hover {
     opacity: 0.8;
-  }
+}
   
   /* Extra styles for the cancel button */
   .cancelbtn {
     width: auto;
     padding: 10px 18px;
     background-color: #f44336;
-  }
+}
   
   /* Center the image and position the close button */
   .imgcontainer {
     text-align: center;
     margin: 24px 0 12px 0;
     position: relative;
-  }
+}
   
   img.avatar {
     width: 40%;
     border-radius: 50%;
-  }
+}
   
   .container {
     padding: 16px;
-  }
+}
   
   span.psw {
     float: right;
     padding-top: 16px;
-  }
+}
 
   #registerLink {
       text-align: center;
-  }
+}
   
   /* The Modal (background) */
   .modal {
@@ -122,7 +122,7 @@ input[type=text], input[type=password] {
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
     padding-top: 60px;
-  }
+}
   
   /* Modal Content/Box */
   .modal-content {
@@ -130,7 +130,7 @@ input[type=text], input[type=password] {
     margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
     border: 1px solid #888;
     width: 60%; /* Could be more or less, depending on screen size */
-  }
+}
   
   /* The Close Button (x) */
   .close {
@@ -140,29 +140,29 @@ input[type=text], input[type=password] {
     color: #000;
     font-size: 35px;
     font-weight: bold;
-  }
+}
   
   .close:hover,
   .close:focus {
     color: red;
     cursor: pointer;
-  }
+}
   
   /* Add Zoom Animation */
   .animate {
     -webkit-animation: animatezoom 0.6s;
     animation: animatezoom 0.6s
-  }
+}
   
   @-webkit-keyframes animatezoom {
     from {-webkit-transform: scale(0)} 
     to {-webkit-transform: scale(1)}
-  }
+}
     
   @keyframes animatezoom {
     from {transform: scale(0)} 
     to {transform: scale(1)}
-  }
+}
   
   /* Change styles for span and cancel button on extra small screens */
   @media screen and (max-width: 300px) {
@@ -173,4 +173,4 @@ input[type=text], input[type=password] {
     .cancelbtn {
        width: 100%;
     }
-  }
+}

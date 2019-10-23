@@ -75,7 +75,7 @@ html,body {
     font-weight: 600;
     font-size: 80pt;
     color: white;
-    text-shadow: -1px 2px 2px #000;
+    text-shadow: -1px 2px 2px grey;
   }
   
   .info {
@@ -134,14 +134,16 @@ html,body {
     top: 50%;
   }
   
-  .gallery img {
+  .galleryImages img {
     box-shadow: 0 3px 6px rgba(0,0,0,0.10), 0 3px 6px rgba(0,0,0,0.10);
     width: 100%; 
     height: auto;
     cursor: pointer;
-    max-width: 100%;
-    left: 50%;
-    top: 50%;
+    max-width: 50%;
+    display: flex;
+    justify-content: left;
+    flex-wrap: wrap;
+    flex-direction: row;
   }
 
   .gallery .info {

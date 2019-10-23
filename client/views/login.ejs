@@ -18,8 +18,11 @@
                         <%= messages.error%>
                     <% }%>
                 </div>
-                <button class="btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
-                <button class="btn" onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Register</button>
+                <button class="btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Local Login</button>
+                <button class="btn" onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Local Register</button>
+                <button class="btn" onclick="document.getElementById('id03').style.display='block'" style="width:auto;">Marist Login</button>
+                <button class="btn" onclick="document.getElementById('id04').style.display='block'" style="width:auto;">Facebook Login</button>
+                
                 <form action="/about" method="GET">
                     <button class="btn" type="submit">About</button>
                 </form>
@@ -29,7 +32,7 @@
                 <form class="modal-content animate" action="/login" method="POST">
                     <div class="imgcontainer">
                         <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
-                        <img src="/images/logo.png" alt="Avatar" class="avatar">
+                        <img src="/images/localLogo.png" alt="Avatar" class="avatar">
                     </div>
 
                     <div class="container">
@@ -56,7 +59,7 @@
                 <form class="modal-content animate" action="/register" method="POST">
                     <div class="imgcontainer">
                         <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
-                        <img src="/images/logo.png" alt="Avatar" class="avatar">
+                        <img src="/images/localLogo.png" alt="Avatar" class="avatar">
                     </div>
 
                     <div class="container">
@@ -75,6 +78,31 @@
                     </div>
                 </form>
             </div>
+
+            <div id="id03" class="modal">
+                <form class="modal-content animate" action="/maristRegister" method="GET">
+                    <div class="imgcontainer">
+                        <span onclick="document.getElementById('id03').style.display='none'" class="close" title="Close Modal">&times;</span>
+                        <img src="/images/maristLogo.png" alt="Avatar" class="avatar">
+                    </div>
+                    <div class="container">
+                        <button type="submit">Marist Login</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="id04" class="modal">
+                <form class="modal-content animate" action="/auth/facebook" method="GET">
+                    <div class="imgcontainer">
+                        <span onclick="document.getElementById('id04').style.display='none'" class="close" title="Close Modal">&times;</span>
+                        <img src="/images/facebookLogo.png" alt="Avatar" class="avatar">
+                    </div>
+                    <div class="container">
+                        <button type="submit">Facebook Login</button>
+                    </div>
+                </form>
+            </div>
+
         </div>
     </body>
 

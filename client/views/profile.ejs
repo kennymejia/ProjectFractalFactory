@@ -60,20 +60,20 @@
                       <div class="nav">
                             Gallery
                       </div>
+                    </div>
 
-                        <div class="gallery">
-                            <% for (let i=0; i<userPaintings.length; i++) { %>
-                                <div class="gallery">
-                                    <a href="/purchase/<%=userPaintings[i].user_painting_id%>">
-                                        <img src="/user-painting/<%=userPaintings[i].user_painting_id%>"/>
-                                    </a>
-                                </div>
-                            <%}%>
+                    <div class="galleryImages">
+                        <% for (let i=0; i<userPaintings.length; i++) { %>
+                            <div class="gallery">
+                                <a href="/purchase/<%=userPaintings[i].user_painting_id%>">
+                                    <img src="/user-painting/<%=userPaintings[i].user_painting_id%>"/>
+                                </a>
+                            </div>
+                        <%}%>
 
-                            <% if(userPaintings.length == 0) {%>
-                                <p class="info">You have no paintings!</p>
-                            <%}%>
-                        </div>
+                        <% if(userPaintings.length == 0) {%>
+                            <p class="info">You have no paintings!</p>
+                        <%}%>
                     </div>
                 </main>
 
