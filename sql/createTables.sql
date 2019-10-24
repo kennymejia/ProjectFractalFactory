@@ -4,7 +4,7 @@
 CREATE TABLE users(
    user_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
    user_account TEXT NOT NULL UNIQUE, -- account identifier
-   password TEXT NOT NULL, -- Password hash or token
+   password TEXT, -- Password hash or token
    first_name TEXT NOT NULL,
    last_name TEXT,
    email TEXT NOT NULL,

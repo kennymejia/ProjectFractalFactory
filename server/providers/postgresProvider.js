@@ -4,7 +4,6 @@ dotenv.config();
 const { Pool } = require('pg');
 const logController = require('../controllers/logController.js');
 
-
 const pool = new Pool({
   host: process.env.DBHOST,
   database: process.env.DBNAME,
@@ -218,64 +217,58 @@ module.exports = {
         try {
             let result = await module.exports.query(`SELECT date_added FROM user_source_files ORDER BY date_added`);
 
-            // Get number of rows occurring in specified hours within a week period
-            let totalHours = {};
-            let cnt = 0;
+            // List of the sum of submissions for each day and hour of the week base list
+            let daysAndHoursList =[];
             for(let d=0; d<7; d++){
                 for (let h=0; h<24; h++) {
-                    totalHours[cnt] = 0;
-                    cnt++;
+                    daysAndHoursList.push({day: d+1, hour: h+1, value: 0});
                 }
             }
 
+            // Fill list with all submission objects
+            let dataUseAll = JSON.parse(JSON.stringify( daysAndHoursList )); // Clone array
             let day;
             let hour;
             for (let row of result.rows) {
-                day = row.date_added.getDay()-1;
-                hour = row.date_added.getHours()-1;
-                totalHours[(day*24) + hour] = totalHours[(day*24) + hour] + 1;
+                day = row.date_added.getDay();
+                hour = row.date_added.getHours();
+                dataUseAll.push({day: day, hour: hour, value: 1});
             }
 
-            // Format dates as day, hour, and # of occurrences
-            let dataUseAll =[];
-            cnt = 0;
-            for(let d=0; d<7; d++){
-                for (let h=0; h<24; h++) {
-                    dataUseAll.push({day: d+1, hour: h+1, value: totalHours[cnt]});
-                    cnt++;
+            // Group the submission objects by day and hour, then take sum
+            dataUseAll = Object.values(dataUseAll.reduce(function(r, e) {
+                var key = e.day + '|' + e.hour;
+                if (!r[key]) r[key] = e;
+                else {
+                    r[key].value += e.value
                 }
-            }
+                return r;
+            }, {}));
 
-            // Clear object
-            totalHours = {};
-            cnt = 0;
-            for(let d=0; d<7; d++){
-                for (let h=0; h<24; h++) {
-                    totalHours[cnt] = 0;
-                    cnt++;
-                }
-            }
 
             // Get rows that were added in the past week
             result = await module.exports.query(`SELECT date_added FROM user_source_files
                                           WHERE date_added > NOW() - interval '7 days'
                                           ORDER BY date_added`);
 
+
+            // Fill list with all submission objects in past week
+            let dataUseWeek = JSON.parse(JSON.stringify( daysAndHoursList )); // Clone array
             for (let row of result.rows) {
-                day = row.date_added.getDay()-1;
-                hour = row.date_added.getHours()-1;
-                totalHours[(day*24) + hour] = totalHours[(day*24) + hour] + 1;
+                day = row.date_added.getDay();
+                hour = row.date_added.getHours();
+                dataUseWeek.push({day: day, hour: hour, value: 1});
             }
 
-            // Format dates as day, hour, and # of occurrences for last 7 days
-            let dataUseWeek =[];
-            cnt = 0;
-            for(let d=0; d<7; d++){
-                for (let h=0; h<24; h++) {
-                    dataUseWeek.push({day: d+1, hour: h+1, value: totalHours[cnt]});
-                    cnt++;
+            // Group the submission objects by day and hour, then take sum
+            dataUseWeek = Object.values(dataUseWeek.reduce(function(r, e) {
+                var key = e.day + '|' + e.hour;
+                if (!r[key]) r[key] = e;
+                else {
+                    r[key].value += e.value
                 }
-            }
+                return r;
+            }, {}));
 
             return [dataUseAll, dataUseWeek];
         } catch(e) {
