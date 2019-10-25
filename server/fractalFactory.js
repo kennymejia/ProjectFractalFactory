@@ -18,41 +18,12 @@ const {promisify} = require('util');
 const getSize = require('get-folder-size');
 const getSizeAsync = promisify(getSize);
 
-
 // Initialize passport with some database functions for authentication
 initializePassport.initialize(
     passport,
-    async username => await provider.getUserByAccount(username),
+    async (userAccount, accountType) => await provider.getUserByAccount(userAccount, accountType),
     async id => await provider.getUserById(id)
 );
-
-
-/////////////////////////// CAS Authentication Strategy /////////////////////
-/*passport.use(new CasStrategy({
-    casURL: 'https://login.marist.edu/cas',
-    profile: { 
-      cwid: 'cwid',
-      firstName: 'firstName',
-      lastName: 'lastName',
-      email: 'maristEmail'
-    }
-  }, 
-  function(username, profile, done) {
-    User.findOrCreate({ id: profile.cwid }, function(err, user) {
-      user.name = profile.name.firstName + ' ' + profile.name.lastName;
-      done(err, user);
-    });
-  }));
-*/
-/*var cas = new CasStrategy({casURL: 'https://login.marist.edu/cas'}, 
-    function(username, profile, done) {
-        console.log("authenticating");
-        done(null, new User());
-    }
-);
-*/   
-    
-    
 
 ////////////////////// Express and Passport Settings //////////////////////
 app.use(bodyParser.json({ type: 'application/json'}));
@@ -141,77 +112,37 @@ app.get('/purchase/:id', async (req,res) => {
     res.render('purchase.ejs', { paintingLink: `/user-painting/${userPaintingId}`, canvasPopKey: process.env.CANVASPOPKEY} );
 });
 
-
 //==============================================================================================
 
-//CALLING FACEBOOK STRATEGY AND REDIRECTING TO FACEBOOK
+// Calling facebook strategy and redirecting to facebook login
 app.route('/auth/facebook').get(passport.authenticate('facebook', {scope: ['email']}));
 
-//A ROUTE SO FACEBOOK KNOWS WHERE TO CALL BACK TO
+//A route so facebook knows where to call back to
 app.get('/auth/facebook/callback',passport.authenticate('facebook', { 
     successRedirect: '/profile',
     failureRedirect: '/',
     failureFlash: true
 }));
-//===============================================================================================
-/*
-app.get('/logout', function(req, res) {
-    var returnURL = '/';
-    cas.logout(req, res, returnURL);
-});
 
-app.get('/marist', function(req, res){
-    res.redirect('/cas');
-})
+//Calling twitter strategy and redirecting to twitter login
+app.route('/auth/twitter').get(passport.authenticate('twitter'));
 
-app.get('/maristRegister',
-passport.authenticate('cas', { failureRedirect: '/', successRedirect: '/profile' }),
-function(req, res) {
-  // Successful.
-  res.redirect('/profile');
-})
-
-app.get('/marist', (req, res, next) => {
-
-    passport.authenticate('cas', function (err, user, info) {
-      // Callback after authentication strategy is complete
-  
-      console.log(`info: ${info}`);
-      // Check error
-      if (err) {
-        console.error(err);
-      }
-  
-      // Check if user was returned
-      if (user) {
-        return res.status(200);
-      }
-    })
-    (req, res);
-});
-
-*/
-
-//////////////////////  Data routing //////////////////////
-
-/*
-//==========================================================
-// LOG IN WITH MARIST CREDENTIALS
-app.post('/marist', passport.authenticate('cas', {
+//A route so twitter knows where to call back to
+app.get('/auth/twitter/callback',passport.authenticate('twitter', { 
     successRedirect: '/profile',
     failureRedirect: '/',
     failureFlash: true
 }));
-*/
 
-/*// LOG IN WITH MARIST CREDENTIALS
-app.get('/maristLogin', passport.authenticate('cas', { 
-    failureRedirect: '/',failureFlash: true}),
-      function(req,res){
+app.route('/auth/cas').get(
+    passport.authenticate('cas', { failureRedirect: '/'}),
+    function(req, res) {
         res.redirect('/profile');
-});
-*/
+    });
+    
+//===============================================================================================
 
+//////////////////////  Data routing //////////////////////
 
 // Either log in a user with an account or deny access
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
@@ -226,7 +157,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         let hashedPassword = await bcrypt.hash(req.body.password, 15);
 
         // Create user of account type 'default'
-        await provider.addUser(req.body.username, hashedPassword, 'default');
+        await provider.addUser(req.body.username, hashedPassword, 'facebook');
 
         // Redirect to login page so user can enter their details
         res.redirect('/');

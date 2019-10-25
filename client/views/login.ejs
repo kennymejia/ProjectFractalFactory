@@ -22,7 +22,8 @@
                 <button class="btn" onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Local Register</button>
                 <button class="btn" onclick="document.getElementById('id03').style.display='block'" style="width:auto;">Marist Login</button>
                 <button class="btn" onclick="document.getElementById('id04').style.display='block'" style="width:auto;">Facebook Login</button>
-                
+                <button class="btn" onclick="document.getElementById('id05').style.display='block'" style="width:auto;">Twitter Login</button>
+
                 <form action="/about" method="GET">
                     <button class="btn" type="submit">About</button>
                 </form>
@@ -80,7 +81,7 @@
             </div>
 
             <div id="id03" class="modal">
-                <form class="modal-content animate" action="/maristRegister" method="GET">
+                <form class="modal-content animate" action="/auth/cas" method="GET">
                     <div class="imgcontainer">
                         <span onclick="document.getElementById('id03').style.display='none'" class="close" title="Close Modal">&times;</span>
                         <img src="/images/maristLogo.png" alt="Avatar" class="avatar">
@@ -103,7 +104,17 @@
                 </form>
             </div>
 
+            <div id="id05" class="modal">
+                <form class="modal-content animate" action="/auth/twitter" method="GET">
+                    <div class="imgcontainer">
+                        <span onclick="document.getElementById('id05').style.display='none'" class="close" title="Close Modal">&times;</span>
+                        <img src="/images/twitterLogo.png" alt="Avatar" class="avatar">
+                    </div>
+                    <div class="container">
+                        <button type="submit">Twitter Login</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </body>
-
 </html>

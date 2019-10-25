@@ -4,7 +4,7 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 // Set up some variables for CAS
 $casService = 'https://login.marist.edu/cas';
-$thisService = 'http://localhost:1337' . $_SERVER['PHP_SELF']; 
+$thisService = 'https://ards.rivas.ai' . $_SERVER['PHP_SELF']; 
 
 /*
 * Check to see if there is a ticket in the GET request.
