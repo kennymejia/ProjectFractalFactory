@@ -76,7 +76,7 @@ var fillDatabase = async paintings => {
 };
 
 var main = async () => {
-    let paintings = await fetchPaintings(3);
+    let paintings = await fetchPaintings( parseInt(process.argv[2]) );
     await fillDatabase(paintings);
 };
 

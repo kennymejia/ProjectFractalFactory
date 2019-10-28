@@ -12,7 +12,7 @@ const pool = new Pool({
   port: process.env.DBPORT,
   max: 20,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+  connectionTimeoutMillis: 5000,
 });
 
 
@@ -103,6 +103,18 @@ module.exports = {
                 return null;
             }
 
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    getWatermark: async (userPaintingId) => {
+        try {
+            let result = await module.exports.query(`SELECT watermark_flag
+                                                     FROM user_paintings WHERE user_painting_id = $1`,
+                                                     [userPaintingId]);
+            return result.rows[0].watermark_flag;
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -237,7 +249,7 @@ module.exports = {
 
             // Group the submission objects by day and hour, then take sum
             dataUseAll = Object.values(dataUseAll.reduce(function(r, e) {
-                var key = e.day + '|' + e.hour;
+                let key = e.day + '|' + e.hour;
                 if (!r[key]) r[key] = e;
                 else {
                     r[key].value += e.value
@@ -262,7 +274,7 @@ module.exports = {
 
             // Group the submission objects by day and hour, then take sum
             dataUseWeek = Object.values(dataUseWeek.reduce(function(r, e) {
-                var key = e.day + '|' + e.hour;
+                let key = e.day + '|' + e.hour;
                 if (!r[key]) r[key] = e;
                 else {
                     r[key].value += e.value
@@ -437,11 +449,23 @@ module.exports = {
         }
     },
 
-    updateLoginDate: async (userId) => {
+    updateLoginDate: async userId => {
         try {
             let result = await module.exports.query(`UPDATE users SET last_login = NOW(),
                                                     date_last_updated = NOW()
                                                     WHERE user_id = $1`,[userId]);
+            return result;
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updateWatermark: async userPaintingId => {
+        try {
+            let result = await module.exports.query(`UPDATE user_paintings SET watermark_flag = 0,
+                                                    date_last_updated = NOW()
+                                                    WHERE user_painting_id = $1`,[userPaintingId]);
             return result;
         } catch(e) {
             console.log(e);

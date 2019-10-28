@@ -4,7 +4,12 @@
   "description": "A service that takes files of code and produces a unique painting based on the fractal dimension of the code.",
   "main": "fractalFactory.js",
   "scripts": {
-    "devStart": "nodemon server/fractalFactory.js"
+    "start": "pm2 start server/fractalFactory.js",
+    "devStart": "nodemon server/fractalFactory.js",
+    "addPaintings": "node --http-parser=legacy ./server/providers/metMuseumProvider.js",
+    "deploy": "npm install && apt-get update && npm run installPython",
+    "installPython": "apt-get install python3.7 && npm run pythonPkgs",
+    "pythonPkgs": "pip install matplotlib Pillow numpy imageio"
   },
   "repository": {
     "type": "git",
@@ -32,6 +37,7 @@
     "express-session": "^1.17.0",
     "formidable": "^1.2.1",
     "get-folder-size": "^2.0.1",
+    "jimp": "^0.8.5",
     "jquery": "^3.4.1",
     "log4js": "^5.2.2",
     "method-override": "^3.0.0",

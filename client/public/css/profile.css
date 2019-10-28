@@ -129,6 +129,10 @@ html,body {
   }
     
   .gallery  {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
     margin-top: 35px;
     left: 50%;
     top: 50%;
@@ -136,12 +140,9 @@ html,body {
   
   .gallery img {
     box-shadow: 0 3px 6px rgba(0,0,0,0.10), 0 3px 6px rgba(0,0,0,0.10);
-    width: 100%; 
     height: auto;
     cursor: pointer;
-    max-width: 100%;
-    left: 50%;
-    top: 50%;
+    width: 400px;
   }
 
   .gallery .info {

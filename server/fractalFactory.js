@@ -17,6 +17,7 @@ const fsp = require('fs').promises;
 const {promisify} = require('util');
 const getSize = require('get-folder-size');
 const getSizeAsync = promisify(getSize);
+const jimp = require("jimp");
 
 
 // Initialize passport with some database functions for authentication
@@ -259,7 +260,27 @@ app.get('/user-painting/:id', checkAuthenticated, async (req, res) => {
         let userPaintingLocation = await provider.getUserPaintingLocation(user.user_id, userPaintingId);
 
         if (userPaintingLocation) {
-            res.sendFile(userPaintingLocation);
+            // Add watermark if user did not pay to remove it
+            if ( await provider.getWatermark(userPaintingId) ) {
+                let painting = await jimp.read(userPaintingLocation);
+                let watermark = await jimp.read("./watermark.png");
+
+                watermark.resize(50, 50);
+                painting.resize(200, 200); // TODO Remove this when actual paintings added
+
+                let image = painting.clone().composite(watermark, 140, 140, {
+                    mode: jimp.BLEND_SOURCE_OVER,
+                    opacitySource: 0.5,
+                    opacityDest: 0.9
+                });
+                let buffer = await image.getBufferAsync(jimp.MIME_PNG);
+
+                res.write(buffer,'binary');
+                res.end(null, 'binary');
+            } else {
+                res.sendFile(userPaintingLocation);
+            }
+
         }
     } catch(e) {
         console.log(e);
@@ -329,4 +350,3 @@ app.listen(process.env.PORT, () => {
 	console.log(`fractalFactory is running on port ${process.env.PORT}`);
 	logController.logger.info(`fractalFactory is running on port ${process.env.PORT}`);
 });
-
