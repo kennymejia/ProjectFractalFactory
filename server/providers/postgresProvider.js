@@ -12,7 +12,7 @@ const pool = new Pool({
   port: process.env.DBPORT,
   max: 20,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
+  connectionTimeoutMillis: 10000,
 });
 
 
@@ -316,6 +316,18 @@ module.exports = {
         }
     },
 
+    getUsers: async () => {
+        try {
+            let result = await module.exports.query(`SELECT user_id, first_name, last_name, email,
+                                                    account_type, admin_flag, active_flag FROM users`);
+            return result.rows;
+
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
     ////////////////////// Add Data //////////////////////
 
     addUser: async (userAccount, password, accountType, firstName, lastName, email) => {
@@ -467,6 +479,30 @@ module.exports = {
                                                     date_last_updated = NOW()
                                                     WHERE user_painting_id = $1`,[userPaintingId]);
             return result;
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updateAdminFlag: async (userId, value) => {
+        try {
+            let result = await module.exports.query(`UPDATE users SET admin_flag = $1,
+                                                    date_last_updated = NOW()
+                                                    WHERE user_id = $2`,[value, userId]);
+            return result.rowCount;
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updateActiveFlag: async (userId, value) => {
+        try {
+            let result = await module.exports.query(`UPDATE users SET active_flag = $1,
+                                                    date_last_updated = NOW()
+                                                    WHERE user_id = $2`,[value, userId]);
+            return result.rowCount;
         } catch(e) {
             console.log(e);
             logController.logger.error(e);

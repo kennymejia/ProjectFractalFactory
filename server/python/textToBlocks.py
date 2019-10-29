@@ -51,6 +51,9 @@ def textToBlocks(sourceFile, outputDirectory):
     # put the text on the image
     d.text(((W-w)/2,(H-h)/2), text, font=font, fill="white")
 
+    #img = img.convert('1')
+    img = img.resize((200, 200))
+
     blocksFileLocation = outputDirectory + sourceFile.split(os.sep)[-1].split(".")[0] + ".jpg"
     img.save(blocksFileLocation)
 
