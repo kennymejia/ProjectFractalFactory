@@ -102,7 +102,7 @@ module.exports.initialize = function (passport, getUserByAccount, getUserById) {
     // cas strategy for logging in
     passport.use(new casStrategy({
         casURL: 'https://login.marist.edu/cas/',
-        pgtURL: 'https://callback.localhost:1337'
+        pgtURL: process.env.CASMARISTCALLBACK
     },
         async function (username, profile, done)
         {   
