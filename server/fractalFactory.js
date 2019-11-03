@@ -4,7 +4,7 @@ const logController = require('./controllers/logController.js');
 const nn = require('./controllers/NNServerController');
 const express = require('express');
 const app = express();
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const provider = require('./providers/postgresProvider');
 const passport = require('passport');
 const flash = require('express-flash');
@@ -17,6 +17,7 @@ const fsp = require('fs').promises;
 const {promisify} = require('util');
 const getSize = require('get-folder-size');
 const getSizeAsync = promisify(getSize);
+const jimp = require("jimp");
 
 // Initialize passport with some database functions for authentication
 initializePassport.initialize(
@@ -47,17 +48,20 @@ app.get('/', (req, res) => {
     res.render('login.ejs');
 });
 
-app.get('/profile', async (req,res) => {
-    // Get list of user painting ids -- pass to ejs
-    let userPaintingIds = [];
-    let statistics;
+app.get('/profile', checkAuthenticated, async (req,res) => {
+    let user = await req.user;
+
+    let userPaintingIds = []; // List of user painting ids -- pass to ejs
+    let statistics; // Statistics for application use
+    let userData; // User data to display in table and make administrative decisions
+
     try {
-        let user = await req.user;
         userPaintingIds = await provider.getUserPaintingIds(user.user_id);
 
-        // Admins get to see statistics
+        // Admins get to see statistics and user table
         if (user.admin_flag) {
             statistics = await provider.getStatistics();
+            userData = await provider.getUsers();
 
             // Add any additional statistics
             let size = await getSizeAsync(process.env.USERSOURCEFILEDIRECTORY);
@@ -68,7 +72,12 @@ app.get('/profile', async (req,res) => {
         logController.logger.error(e);
     }
 
-    res.render('profile.ejs', { userPaintings: userPaintingIds, statistics: statistics});
+    res.render('profile.ejs', { userPaintings: userPaintingIds,
+                                statistics: statistics,
+                                email: user.email,
+                                firstName: user.first_name,
+                                lastName: user.last_name,
+                                users: userData});
 });
 
 app.get('/about', (req,res) => {
@@ -152,12 +161,14 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 }));
 
 // Register new user with provided details
+// TODO Prevent the same user account --- username specifically
 app.post('/register', checkNotAuthenticated, async (req, res) => {
     try {
-        let hashedPassword = await bcrypt.hash(req.body.password, 15);
+        let hashedPassword = await bcrypt.hash(req.body.password, 13);
 
         // Create user of account type 'default'
-        await provider.addUser(req.body.username, hashedPassword, 'facebook');
+        await provider.addUser(req.body.username, hashedPassword, 'default',
+                               req.body.firstname, req.body.lastname || null, req.body.email);
 
         // Redirect to login page so user can enter their details
         res.redirect('/');
@@ -170,6 +181,22 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     }
 });
 
+// Toggle admin status
+app.post('/admin-status', checkAuthenticated, checkAdmin, async(req, res) => {
+    let result = await provider.updateAdminFlag(req.body.affectedUserId, req.body.adminStatus);
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send({"result": result});
+});
+
+// Toggle active status
+app.post('/active-status', checkAuthenticated, checkAdmin, async(req, res) => {
+    let result = await provider.updateActiveFlag(req.body.affectedUserId, req.body.activeStatus);
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send({"result": result});
+});
+
 // Upload source code from file -- served to the url of the page that it is on
 app.post('/upload', checkAuthenticated, async (req, res) => {
     try {
@@ -179,21 +206,25 @@ app.post('/upload', checkAuthenticated, async (req, res) => {
         let userSourceFileId = await provider.addUserSourceFile(user.user_id);
 
         // Create user source file
-        let filePath = `${process.env.USERSOURCEFILEDIRECTORY}/${userSourceFileId}.txt`;
+        let userSourceFileLocation = `${process.env.USERSOURCEFILEDIRECTORY}${userSourceFileId}.txt`;
         let form = new formidable.IncomingForm();
         form.maxFileSize = 10 * 1024 * 1024;
 
         form.parse(req);
         form.on('fileBegin', (name, file) => {
-            file.path = filePath;
+            file.path = userSourceFileLocation;
         });
 
         form.on('file', async (name, file) => {
             // Update entry in database with file location
-            await provider.updateUserSourceFileLocation(userSourceFileId, filePath);
+            await provider.updateUserSourceFileLocation(userSourceFileId, userSourceFileLocation);
+
+            // Create BAM/blocks file
+            let userBlocksFileLocation = await nn.createBlocks(user.user_id, userSourceFileId, userSourceFileLocation);
+            await provider.updateUserBlocksFileLocation(userSourceFileId, userBlocksFileLocation);
 
             // Update entry in database with fractal dimension
-            let fractalDimension = await nn.calculateFractalDimension(filePath);
+            let fractalDimension = await nn.calculateFractalDimension(userBlocksFileLocation);
             await provider.updateUserSourceFractalDimension(userSourceFileId, fractalDimension);
 
             // TODO Security with file permissions
@@ -217,14 +248,18 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
         let userSourceFileId = await provider.addUserSourceFile(user.user_id);
 
         // Create user source file
-        let filePath = `${process.env.USERSOURCEFILEDIRECTORY}/${userSourceFileId}.txt`;
-        await fsp.writeFile(filePath, req.body.text);
+        let userSourceFileLocation = `${process.env.USERSOURCEFILEDIRECTORY}${userSourceFileId}.txt`;
+        await fsp.writeFile(userSourceFileLocation, req.body.text);
 
         // Update entry in database with file location
-        await provider.updateUserSourceFileLocation(userSourceFileId, filePath);
+        await provider.updateUserSourceFileLocation(userSourceFileId, userSourceFileLocation);
+
+        // Create BAM/blocks file
+        let userBlocksFileLocation = await nn.createBlocks(user.user_id, userSourceFileId, userSourceFileLocation);
+        await provider.updateUserBlocksFileLocation(userSourceFileId, userBlocksFileLocation);
 
         // Update entry in database with fractal dimension
-        let fractalDimension = await nn.calculateFractalDimension(filePath);
+        let fractalDimension = await nn.calculateFractalDimension(userBlocksFileLocation);
         await provider.updateUserSourceFractalDimension(userSourceFileId, fractalDimension);
 
         // TODO Security with file permissions
@@ -237,11 +272,44 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
     }
 });
 
+// Upload paintings from admin profile
+app.post('/profile', checkAuthenticated, checkAdmin, async (req, res) => {
+    try {
+        new formidable.IncomingForm().parse(req, async(err, fields, files) => {
+            if (err) {
+                console.log(err);
+                logController.logger.error(err);
+            }
+
+            for (const file of Object.entries(files)) {
+                let paintingId = await provider.addPainting(fields.name,
+                    fields.painter || "Unidentified Artist",
+                    fields.yearCreated);
+
+                // Add file path
+                let paintingFileLocation = `${process.env.PAINTINGDIRECTORY}${paintingId}.jpg`;
+                let result = await fsp.rename(file[1].path, paintingFileLocation);
+                await provider.updatePaintingFileLocation(paintingId, paintingFileLocation);
+
+                // Add fractal dimension -- if null, it means the painting was not RGB format
+                let fractalDimension = await nn.calculateFractalDimension(paintingFileLocation);
+                await provider.updatePaintingFractalDimension(paintingId, fractalDimension);
+                res.redirect('/profile'); // Redirect to same page
+            }
+        })
+
+    } catch(e) {
+        console.log(e);
+        logController.logger.error(e);
+    }
+});
+
 // Log a user out
 app.delete('/logout', checkAuthenticated, (req, res) => {
     req.logOut(); // Setup by passport
     res.redirect('/');
 });
+
 
 // Create user painting
 app.get('/generate-user-painting/:userSourceFileId/:paintingId', checkAuthenticated, async (req, res) => {
@@ -270,7 +338,27 @@ app.get('/user-painting/:id', checkAuthenticated, async (req, res) => {
         let userPaintingLocation = await provider.getUserPaintingLocation(user.user_id, userPaintingId);
 
         if (userPaintingLocation) {
-            res.sendFile(userPaintingLocation);
+            // Add watermark if user did not pay to remove it
+            if ( await provider.getWatermark(userPaintingId) ) {
+                let painting = await jimp.read(userPaintingLocation);
+                let watermark = await jimp.read(process.env.WATERMARKFILE);
+
+                watermark.resize(50, 50);
+                painting.resize(200, 200); // TODO Remove this when actual paintings added
+
+                let image = painting.clone().composite(watermark, 140, 140, {
+                    mode: jimp.BLEND_SOURCE_OVER,
+                    opacitySource: 0.5,
+                    opacityDest: 0.9
+                });
+                let buffer = await image.getBufferAsync(jimp.MIME_PNG);
+
+                res.write(buffer,'binary');
+                res.end(null, 'binary');
+            } else {
+                res.sendFile(userPaintingLocation);
+            }
+
         }
     } catch(e) {
         console.log(e);
