@@ -86,16 +86,16 @@
                              <div class="statistic"><%=key%>: <%=value%></div>
                           <%}%>
 
+                          <h2 class="title">Add a Painting</h2>
+                          <form enctype="multipart/form-data" method="post" id="fileForm">
+                              <input type="text" placeholder="Title" name="name" required>
+                              <input type="text" placeholder="Painter" name="painter" required>
+                              <input type="text" placeholder="Year Created" name="yearCreated" required>
+                              <input name="file" class="custom-file-input" type="file" id="fileUpload" placeholder="Choose a file" required/>
+                              <label for="fileUpload" id="fileUploadLabel">Upload a Painting</label>
+                              <input class="form-submit-button" type="submit" name="submit">
+                          </form>
                       </div>
-
-                      <form enctype="multipart/form-data" method="post" id="fileForm">
-                          <input type="text" placeholder="Title" name="name" required>
-                          <input type="text" placeholder="Painter" name="painter" required>
-                          <input type="text" placeholder="Year Created" name="yearCreated" required>
-                          <input name="file" class="custom-file-input" type="file" id="fileUpload" placeholder="Choose a file" required/>
-                          <label for="fileUpload" id="fileUploadLabel">Upload a Painting</label>
-                          <input class="form-submit-button" type="submit" name="submit">
-                      </form>
                   <%}%>
                   
                   <div class="row" id="userInfo">

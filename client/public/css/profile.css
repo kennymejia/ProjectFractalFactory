@@ -249,6 +249,7 @@ thead, tfoot, .userName, .userEmail, .userAccountType, .adminToggle, .activeTogg
 
 #fileUpload + label {
   background-color: black;
+  color: black;
   display: inline-block;
   text-shadow: 1px 1px #fff;
   font-weight: 800;
@@ -299,4 +300,8 @@ thead, tfoot, .userName, .userEmail, .userAccountType, .adminToggle, .activeTogg
 }
 .form-submit-button:active::before {
   background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+
+.title {
+  margin-top: 50px;
 }

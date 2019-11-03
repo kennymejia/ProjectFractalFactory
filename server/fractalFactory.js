@@ -399,6 +399,6 @@ async function checkAdmin (req, res, next) {
 
 ////////////////////// Port Listening //////////////////////
 app.listen(process.env.PORT, () => {
-	console.log(`fractalFactory is running on port ${process.env.PORT}`);
-	logController.logger.info(`fractalFactory is running on port ${process.env.PORT}`);
+    console.log(`fractalFactory is running on port ${process.env.PORT}`);
+    logController.logger.info(`fractalFactory is running on port ${process.env.PORT}`);
 });
