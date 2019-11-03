@@ -5,6 +5,7 @@
         <link href="css/login.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Long+Cang&display=swap" rel="stylesheet">
         <title>Login</title>
+        <link rel="icon" href="/images/favicon.png">
         <script src="js/login.js"></script>
     </head>
 
@@ -26,7 +27,7 @@
             </div>
 
             <div id="id01" class="modal">
-                <form class="modal-content animate" action="/login" method="POST">
+                <form class="modal-content animate" autocomplete="on" action="/login" method="POST">
                     <div class="imgcontainer">
                         <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
                         <img src="/images/logo.png" alt="Avatar" class="avatar">
@@ -67,6 +68,18 @@
                         <div>
                             <label for="password">Password</label>
                             <input type="password" name="password" required>
+                        </div>
+                        <div>
+                            <label for="firstName">First Name</label>
+                            <input type="text" name="firstname" required>
+                        </div>
+                        <div>
+                            <label for="lastName">Last Name</label>
+                            <input type="text" name="lastname">
+                        </div>
+                        <div>
+                            <label for="email">Email</label>
+                            <input type="email" name="email" required>
                         </div>
                     </div>
 

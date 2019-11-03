@@ -46,7 +46,7 @@ html,body {
         padding: 20px 20px 0px 20px;
   }
   
-  .left {
+  #userInfo {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -59,6 +59,15 @@ html,body {
     justify-content: center;
     flex-direction: column;
     color: white;
+  }
+
+  #userTable_wrapper {
+    margin-bottom:50px;
+  }
+
+  #userTable {
+    background-color: rgb(255, 255, 217);
+    color: black;
   }
   
   .photo {
@@ -116,7 +125,7 @@ html,body {
     padding: 0 25px 0 25px !important;
   }
   
-  .nav {
+  .navigation {
     margin: 40px 30px 0 10px;
     font-size: 18pt;
     text-transform: uppercase;
@@ -126,9 +135,14 @@ html,body {
     text-align: center;
     text-shadow: -1px 2px 2px #000;
     margin-bottom: 80px;
+    padding-left: 20px;
   }
     
   .gallery  {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
     margin-top: 35px;
     left: 50%;
     top: 50%;
@@ -136,12 +150,9 @@ html,body {
   
   .gallery img {
     box-shadow: 0 3px 6px rgba(0,0,0,0.10), 0 3px 6px rgba(0,0,0,0.10);
-    width: 100%; 
     height: auto;
     cursor: pointer;
-    max-width: 100%;
-    left: 50%;
-    top: 50%;
+    width: 400px;
   }
 
   .gallery .info {
@@ -217,4 +228,80 @@ html,body {
 
 #chart text.axis-worktime, #dataset-picker text.axis-worktime {
   fill: #FF0000;
+}
+
+thead, tfoot, .userName, .userEmail, .userAccountType, .adminToggle, .activeToggle {
+  text-align: center;
+}
+
+#fileForm {
+  text-align: center;
+}
+
+#fileUpload {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+#fileUpload + label {
+  background-color: black;
+  color: black;
+  display: inline-block;
+  text-shadow: 1px 1px #fff;
+  font-weight: 800;
+  font-size: 10pt;
+  margin-top: 2%;
+  background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 5px 8px;
+  outline: none;
+  white-space: nowrap;
+}
+
+#fileUpload:focus + label,
+#fileUpload + label:hover {
+  border-color: black;
+  cursor: pointer;
+}
+
+#fileUpload:focus + label {
+  outline: -webkit-focus-ring-color auto 5px;
+}
+
+#fileUpload:active + label {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+
+#fileUpload + label * {
+  pointer-events: none;
+}
+
+.form-submit-button {
+  display: inline-block;
+  background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 5px 8px;
+  outline: none;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  text-shadow: 1px 1px #fff;
+  font-weight: 700;
+  font-size: 10pt;
+}
+.form-submit-button:hover::before {
+  border-color: black;
+}
+.form-submit-button:active::before {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+
+.title {
+  margin-top: 50px;
 }

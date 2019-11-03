@@ -68,6 +68,7 @@ html {
 .paintingInfo {
     color: white;
     width: 200px;
+    text-align: center;
 }
 
 #profile button {
