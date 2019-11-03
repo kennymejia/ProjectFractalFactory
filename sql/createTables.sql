@@ -4,10 +4,10 @@
 CREATE TABLE users(
    user_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
    user_account TEXT NOT NULL UNIQUE, -- account identifier
-   password TEXT, -- Password hash or token
-   first_name TEXT NOT NULL,
+   password TEXT CHECK (account_type == 'default' AND password IS NOT NULL), -- Password hash or token
+   first_name TEXT,
    last_name TEXT,
-   email TEXT NOT NULL,
+   email TEXT,
    account_type TEXT NOT NULL,
    admin_flag BOOLEAN DEFAULT 'f' NOT NULL,
    last_login TIMESTAMPTZ DEFAULT NOW() NOT NULL,
