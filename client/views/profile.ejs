@@ -105,18 +105,19 @@
                       <div class="desc-stat">Uploads</div>
                   </div>
                     
+                    <div class="right col-lg-8">
+                      <div class="nav">
+                        <form action="/upload" id="upload">
+                            <button type="submit">Lets Upload!</button>
+                        </form>  
+                      </div>
+                      
+                      <div class="nav">
+                            Gallery
+                      </div>
+                    </div>
 
-                  <div class="navigation">
-                    <form action="/upload" id="upload">
-                        <button type="submit">Lets Upload!</button>
-                    </form>
-                  </div>
-
-                  <div class="navigation">
-                        Gallery
-                  </div>
-
-                    <div class="gallery">
+                    <div class="galleryImages">
                         <% for (let i=0; i<userPaintings.length; i++) { %>
                             <div class="gallery">
                                 <a href="/purchase/<%=userPaintings[i].user_painting_id%>">

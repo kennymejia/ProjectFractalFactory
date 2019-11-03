@@ -49,11 +49,11 @@ module.exports = {
 
     ////////////////////// Get Data //////////////////////
 
-    getUserByAccount: async userAccount => {
+    getUserByAccount: async (userAccount, accountType) => {
         try {
             let result = await module.exports.query(`SELECT * FROM users 
-                                           WHERE account_type = 'default' AND user_account = $1`,
-                                [userAccount]);
+                                           WHERE account_type = $1 AND user_account = $2`,
+                                [accountType, userAccount]);
             if (!result.rows) {
                 return null;
             } else {
@@ -68,7 +68,7 @@ module.exports = {
     getUserById: async userId => {
         try {
             let result = await module.exports.query(`SELECT * FROM users 
-                                               WHERE account_type = 'default' AND user_id = $1`, [userId]);
+                                               WHERE user_id = $1`, [userId]);
             if (!result.rows) {
                 return null;
             } else {

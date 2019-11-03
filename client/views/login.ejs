@@ -11,45 +11,35 @@
 
     <body>
         <div class="centerDiv">
-            <h2 class="ff">Fractal Factory Login</h2>
-
+            <h2 class="ff">FRACTAL FACTORY</h2>
+            <h2 class="login">WELCOME</h2>
             <div class="centerDiv">
                 <div id="messages">
                     <% if (messages.error) { %>
                         <%= messages.error%>
                     <% }%>
                 </div>
-                <button class="btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
-                <button class="btn" onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Register</button>
-                <form action="/about" method="GET">
-                    <button class="btn" type="submit">About</button>
-                </form>
-            </div>
 
-            <div id="id01" class="modal">
-                <form class="modal-content animate" autocomplete="on" action="/login" method="POST">
-                    <div class="imgcontainer">
-                        <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
-                        <img src="/images/logo.png" alt="Avatar" class="avatar">
-                    </div>
-
+                <form action="/login" method="POST">    
                     <div class="container">
                         <label for="username"><b>Username</b></label>
                         <input type="text" placeholder="Enter Username" name="username" required>
-
                         <label for="password"><b>Password</b></label>
                         <input type="password" placeholder="Enter Password" name="password" required>
-
                         <button type="submit">Login</button>
-                        <label>
-                            <input type="checkbox" checked="checked" name="remember"> Remember me
-                        </label>
+                        <div class="centerDiv"><p class="or">- OR -</p></div>
+                        <button class="submit" onclick="document.getElementById('id02').style.display='block'">Register</button>
                     </div>
+                </form>
 
-                    <div class="container" style="background-color:#f1f1f1">
-                        <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
-                        <span class="psw">Forgot <a href="#">password?</a></span>
-                    </div>
+                <div class="right">
+                    <button class="maristbtn" onclick="document.getElementById('id03').style.display='block'" style="width:auto;">Marist Login</button>
+                    <button class="facebookbtn" onclick="document.getElementById('id04').style.display='block'" style="width:auto;">Facebook Login</button>
+                    <button class="twitterbtn" onclick="document.getElementById('id05').style.display='block'" style="width:auto;">Twitter Login</button>
+                </div>
+
+                <form action="/about" method="GET">
+                    <button class="btn" type="submit">About</button>
                 </form>
             </div>
 
@@ -57,7 +47,7 @@
                 <form class="modal-content animate" action="/register" method="POST">
                     <div class="imgcontainer">
                         <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
-                        <img src="/images/logo.png" alt="Avatar" class="avatar">
+                        <img src="/images/localLogo.png" alt="Avatar" class="avatar">
                     </div>
 
                     <div class="container">
@@ -88,7 +78,42 @@
                     </div>
                 </form>
             </div>
+
+            <div id="id03" class="modal">
+                <form class="modal-content animate" action="/auth/cas" method="GET">
+                    <div class="imgcontainer">
+                        <span onclick="document.getElementById('id03').style.display='none'" class="close" title="Close Modal">&times;</span>
+                        <img src="/images/maristLogo.png" alt="Avatar" class="avatar">
+                    </div>
+                    <div class="container">
+                        <button type="submit">Marist Login</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="id04" class="modal">
+                <form class="modal-content animate" action="/auth/facebook" method="GET">
+                    <div class="imgcontainer">
+                        <span onclick="document.getElementById('id04').style.display='none'" class="close" title="Close Modal">&times;</span>
+                        <img src="/images/facebookLogo.png" alt="Avatar" class="avatar">
+                    </div>
+                    <div class="container">
+                        <button type="submit">Facebook Login</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="id05" class="modal">
+                <form class="modal-content animate" action="/auth/twitter" method="GET">
+                    <div class="imgcontainer">
+                        <span onclick="document.getElementById('id05').style.display='none'" class="close" title="Close Modal">&times;</span>
+                        <img src="/images/twitterLogo.png" alt="Avatar" class="avatar">
+                    </div>
+                    <div class="container">
+                        <button type="submit">Twitter Login</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </body>
-
 </html>

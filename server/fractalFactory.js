@@ -19,14 +19,12 @@ const getSize = require('get-folder-size');
 const getSizeAsync = promisify(getSize);
 const jimp = require("jimp");
 
-
 // Initialize passport with some database functions for authentication
 initializePassport.initialize(
     passport,
-    async username => await provider.getUserByAccount(username),
+    async (userAccount, accountType) => await provider.getUserByAccount(userAccount, accountType),
     async id => await provider.getUserById(id)
 );
-
 
 ////////////////////// Express and Passport Settings //////////////////////
 app.use(bodyParser.json({ type: 'application/json'}));
@@ -45,9 +43,8 @@ app.use(methodOverride('_method')); // Used to change method to clearer one for 
 app.set('views', 'client/views');
 app.set('view-engine', 'ejs');
 
-
 ////////////////////// Page routing //////////////////////
-app.get('/', checkNotAuthenticated, (req, res) => {
+app.get('/', (req, res) => {
     res.render('login.ejs');
 });
 
@@ -88,7 +85,7 @@ app.get('/about', (req,res) => {
 });
 
 app.use('/results', express.static('client/public')); // Results/:id is a conceptual link, not a physical one
-app.get('/results/:id', checkAuthenticated, async (req,res) => {
+app.get('/results/:id', async (req,res) => {
     let userSourceFileId = req.params.id;
 
     // Get list of painting ids -- pass to ejs
@@ -114,16 +111,45 @@ app.get('/results/:id', checkAuthenticated, async (req,res) => {
     res.render('results.ejs', { paintings: paintings} );
 });
 
-app.get('/upload', checkAuthenticated,  (req,res) => {
+app.get('/upload',  (req,res) => {
     res.render('upload.ejs');
 });
 
 app.use('/purchase', express.static('client/public')); // purchase/:id is a conceptual link, not a physical one
-app.get('/purchase/:id', checkAuthenticated, async (req,res) => {
+app.get('/purchase/:id', async (req,res) => {
     let userPaintingId = req.params.id;
     res.render('purchase.ejs', { paintingLink: `/user-painting/${userPaintingId}`, canvasPopKey: process.env.CANVASPOPKEY} );
 });
 
+//==============================================================================================
+
+// Calling facebook strategy and redirecting to facebook login
+app.route('/auth/facebook').get(passport.authenticate('facebook', {scope: ['email']}));
+
+//A route so facebook knows where to call back to
+app.get('/auth/facebook/callback',passport.authenticate('facebook', { 
+    successRedirect: '/profile',
+    failureRedirect: '/',
+    failureFlash: true
+}));
+
+//Calling twitter strategy and redirecting to twitter login
+app.route('/auth/twitter').get(passport.authenticate('twitter'));
+
+//A route so twitter knows where to call back to
+app.get('/auth/twitter/callback',passport.authenticate('twitter', { 
+    successRedirect: '/profile',
+    failureRedirect: '/',
+    failureFlash: true
+}));
+
+app.route('/auth/cas').get(
+    passport.authenticate('cas', { failureRedirect: '/'}),
+    function(req, res) {
+        res.redirect('/profile');
+    });
+    
+//===============================================================================================
 
 //////////////////////  Data routing //////////////////////
 
@@ -399,6 +425,6 @@ async function checkAdmin (req, res, next) {
 
 ////////////////////// Port Listening //////////////////////
 app.listen(process.env.PORT, () => {
-    console.log(`fractalFactory is running on port ${process.env.PORT}`);
-    logController.logger.info(`fractalFactory is running on port ${process.env.PORT}`);
+	console.log(`fractalFactory is running on port ${process.env.PORT}`);
+	logController.logger.info(`fractalFactory is running on port ${process.env.PORT}`);
 });
