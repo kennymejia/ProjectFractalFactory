@@ -235,7 +235,9 @@ $(document).ready(function () {
 let input = document.getElementById('fileUpload');
 let inputLabel = document.getElementById('fileUploadLabel');
 
-input.addEventListener('change', e => {
-    let fileName = input.files[0].name;
-    inputLabel.innerHTML = fileName;
-});
+if (input) {
+    input.addEventListener('change', e => {
+        let fileName = input.files[0].name;
+        inputLabel.innerHTML = fileName;
+    });
+}

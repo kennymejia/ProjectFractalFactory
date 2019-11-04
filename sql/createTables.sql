@@ -3,8 +3,9 @@
 
 CREATE TABLE users(
    user_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-   user_account TEXT NOT NULL UNIQUE, -- account identifier
-   password TEXT CHECK (account_type == 'default' AND password IS NOT NULL), -- Password hash or token
+   user_account TEXT NOT NULL, -- account identifier
+   password TEXT CHECK ( (account_type = 'default' AND password IS NOT NULL)
+                          OR (account_type != 'default' AND password IS NULL)), -- Password hash or token
    first_name TEXT,
    last_name TEXT,
    email TEXT,
@@ -13,7 +14,8 @@ CREATE TABLE users(
    last_login TIMESTAMPTZ DEFAULT NOW() NOT NULL,
    date_added TIMESTAMPTZ DEFAULT NOW() NOT NULL,
    date_last_updated TIMESTAMPTZ DEFAULT NOW(),
-   active_flag BOOLEAN DEFAULT 't' NOT NULL
+   active_flag BOOLEAN DEFAULT 't' NOT NULL,
+   UNIQUE (user_account, account_type)
 );
 
 CREATE TABLE paintings(

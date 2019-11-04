@@ -98,26 +98,20 @@
                       </div>
                   <%}%>
                   
-                  <div class="row" id="userInfo">
-                      <div class="name"><%=firstName%> <%=lastName%></div>
-                      <div class="info"><%=email%></div>
+                  <div class="row" id="profileHeader">
                       <div class="number-stat"><%=userPaintings.length%></div>
                       <div class="desc-stat">Uploads</div>
                   </div>
-                    
-                    <div class="right col-lg-8">
-                      <div class="nav">
-                        <form action="/upload" id="upload">
-                            <button type="submit">Lets Upload!</button>
-                        </form>  
-                      </div>
-                      
-                      <div class="nav">
-                            Gallery
-                      </div>
-                    </div>
 
-                    <div class="galleryImages">
+                  <div class="navigation">
+                    <form action="/upload" id="upload">
+                        <button type="submit">Lets Upload!</button>
+                    </form>
+                    <div>Gallery</div>
+                  </div>
+
+
+                    <div class="gallery">
                         <% for (let i=0; i<userPaintings.length; i++) { %>
                             <div class="gallery">
                                 <a href="/purchase/<%=userPaintings[i].user_painting_id%>">

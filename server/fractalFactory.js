@@ -85,7 +85,7 @@ app.get('/about', (req,res) => {
 });
 
 app.use('/results', express.static('client/public')); // Results/:id is a conceptual link, not a physical one
-app.get('/results/:id', async (req,res) => {
+app.get('/results/:id', checkAuthenticated, async (req,res) => {
     let userSourceFileId = req.params.id;
 
     // Get list of painting ids -- pass to ejs
@@ -111,12 +111,12 @@ app.get('/results/:id', async (req,res) => {
     res.render('results.ejs', { paintings: paintings} );
 });
 
-app.get('/upload',  (req,res) => {
+app.get('/upload', checkAuthenticated, (req,res) => {
     res.render('upload.ejs');
 });
 
 app.use('/purchase', express.static('client/public')); // purchase/:id is a conceptual link, not a physical one
-app.get('/purchase/:id', async (req,res) => {
+app.get('/purchase/:id', checkAuthenticated, async (req,res) => {
     let userPaintingId = req.params.id;
     res.render('purchase.ejs', { paintingLink: `/user-painting/${userPaintingId}`, canvasPopKey: process.env.CANVASPOPKEY} );
 });
@@ -124,10 +124,10 @@ app.get('/purchase/:id', async (req,res) => {
 //==============================================================================================
 
 // Calling facebook strategy and redirecting to facebook login
-app.route('/auth/facebook').get(passport.authenticate('facebook', {scope: ['email']}));
+app.route('/auth/facebook').get(passport.authenticate('facebook', { scope: ['email'] }));
 
 //A route so facebook knows where to call back to
-app.get('/auth/facebook/callback',passport.authenticate('facebook', { 
+app.get('/auth/facebook/callback', passport.authenticate('facebook', {
     successRedirect: '/profile',
     failureRedirect: '/',
     failureFlash: true
@@ -137,7 +137,7 @@ app.get('/auth/facebook/callback',passport.authenticate('facebook', {
 app.route('/auth/twitter').get(passport.authenticate('twitter'));
 
 //A route so twitter knows where to call back to
-app.get('/auth/twitter/callback',passport.authenticate('twitter', { 
+app.get('/auth/twitter/callback', passport.authenticate('twitter', {
     successRedirect: '/profile',
     failureRedirect: '/',
     failureFlash: true
@@ -419,7 +419,7 @@ async function checkAdmin (req, res, next) {
         return next();
     }
 
-    // Send empty array back so that heatmap won't be generated for non-admin
+    // Send empty array back so that heat map won't be generated for non-admin
     res.send([]);
 }
 
