@@ -173,4 +173,71 @@ window.onclick = function(event) {
     if (event.target == modal) {
         modal.style.display = "none";
     }
+};
+
+
+    // Get checkboxes
+    let adminChecks = document.getElementsByClassName('adminToggle');
+    let activeChecks = document.getElementsByClassName('activeToggle');
+
+    // Set event listeners for toggling admin and active statuses
+    let request;
+    let response;
+    for(let checkbox of adminChecks) {
+
+        checkbox.addEventListener('change', async(e) => {
+            request = {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json;charset=UTF-8'
+                },
+                body: `{"adminStatus": ${e.target.checked},
+                        "affectedUserId": "${e.target.parentElement.parentElement.querySelector('.userId').innerHTML}" }`
+            };
+
+            response = await fetch('/admin-status', request);
+
+            if(response.status !== 200){
+                console.log(`${response.status} msg: ${response.value}`);
+            }
+
+        });
+    }
+
+    for(let checkbox of activeChecks) {
+
+        checkbox.addEventListener('change', async(e) => {
+            request = {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json;charset=UTF-8'
+                },
+                body: `{"activeStatus": ${e.target.checked},
+                        "affectedUserId": "${e.target.parentElement.parentElement.querySelector('.userId').innerHTML}" }`
+            };
+
+            response = await fetch('/active-status', request);
+
+            if (response.status !== 200) {
+                console.log(`${response.status} msg: ${response.value}`);
+            }
+        });
+    }
+
+
+// Bootstrap user table logic
+$(document).ready(function () {
+    $('#userTable').DataTable();
+    $('.dataTables_length').addClass('bs-select');
+});
+
+// Put name of file that is being uploaded
+let input = document.getElementById('fileUpload');
+let inputLabel = document.getElementById('fileUploadLabel');
+
+if (input) {
+    input.addEventListener('change', e => {
+        let fileName = input.files[0].name;
+        inputLabel.innerHTML = fileName;
+    });
 }

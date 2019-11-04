@@ -4,7 +4,6 @@ dotenv.config();
 const { Pool } = require('pg');
 const logController = require('../controllers/logController.js');
 
-
 const pool = new Pool({
   host: process.env.DBHOST,
   database: process.env.DBNAME,
@@ -13,13 +12,14 @@ const pool = new Pool({
   port: process.env.DBPORT,
   max: 20,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+  connectionTimeoutMillis: 10000,
 });
 
 
 module.exports = {
 
 	test: async () => {
+
 		try{
 			let client = await pool.connect();
 			let res = await client.query('SELECT NOW()');
@@ -27,6 +27,7 @@ module.exports = {
 			client.release();
 			
 			return res;
+
 		}catch(e){
             console.log(e);
 			logController.logger.error(e);
@@ -34,6 +35,7 @@ module.exports = {
   },
 
     query: async (sql, parameters) => {
+
         try{
             let client = await pool.connect();
             let res = await client.query(sql, parameters);
@@ -50,16 +52,18 @@ module.exports = {
 
     ////////////////////// Get Data //////////////////////
 
-    getUserByAccount: async userAccount => {
+    getUserByAccount: async (userAccount, accountType) => {
+
         try {
             let result = await module.exports.query(`SELECT * FROM users 
-                                           WHERE account_type = 'default' AND user_account = $1`,
-                                [userAccount]);
+                                           WHERE account_type = $1 AND user_account = $2`,
+                                [accountType, userAccount]);
             if (!result.rows) {
                 return null;
             } else {
                 return result.rows[0];
             }
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -67,14 +71,16 @@ module.exports = {
     },
 
     getUserById: async userId => {
+
         try {
             let result = await module.exports.query(`SELECT * FROM users 
-                                               WHERE account_type = 'default' AND user_id = $1`, [userId]);
+                                               WHERE user_id = $1`, [userId]);
             if (!result.rows) {
                 return null;
             } else {
                 return result.rows[0];
             }
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -82,10 +88,12 @@ module.exports = {
     },
 
     getUserPaintingIds: async userId => {
+
 	    try {
             let result = await module.exports.query(`SELECT user_painting_id FROM user_paintings 
                                                WHERE user_id = $1`, [userId]);
             return result.rows;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -93,6 +101,7 @@ module.exports = {
     },
 
     getUserPaintingLocation: async (userId, userPaintingId) => {
+
         try {
             let result = await module.exports.query(`SELECT file_location FROM user_paintings 
                                                WHERE user_id = $1 AND user_painting_id = $2`,
@@ -110,8 +119,23 @@ module.exports = {
         }
     },
 
+    getWatermark: async (userPaintingId) => {
+
+        try {
+            let result = await module.exports.query(`SELECT watermark_flag
+                                                     FROM user_paintings WHERE user_painting_id = $1`,
+                                                     [userPaintingId]);
+            return result.rows[0].watermark_flag;
+
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
     // Limit set in environment configuration -- get paintings closest to given fractal dimension
     getPaintingIds: async fractalDimension => {
+
         try {
             // TODO Change this back from random after demo
             // let result = await module.exports.query(`SELECT painting_id
@@ -122,6 +146,7 @@ module.exports = {
                                                FROM paintings ORDER BY RANDOM()
                                                LIMIT ${process.env.TOPPAINTINGNUMBER}`);
             return result.rows;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -129,11 +154,13 @@ module.exports = {
     },
 
     getRandomPaintingId: async () => {
+
         try {
             let result = await module.exports.query(`SELECT painting_id
                                                FROM paintings ORDER BY RANDOM()
                                                LIMIT 1`);
             return result.rows[0].painting_id;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -142,6 +169,7 @@ module.exports = {
 
 
     getPaintingLocation: async paintingId => {
+
         try {
             let result = await module.exports.query(`SELECT file_location FROM paintings 
                                                WHERE painting_id = $1`,
@@ -152,6 +180,7 @@ module.exports = {
             } else {
                 return null;
             }
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -159,12 +188,14 @@ module.exports = {
     },
 
     getPaintingMetadata: async paintingId => {
+
         try {
             let result = await module.exports.query(`SELECT name, painter, year_created FROM paintings 
                                                     WHERE painting_id = $1`,
                                          [paintingId]);
 
             return result.rows[0] || {};
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -172,11 +203,13 @@ module.exports = {
     },
 
     getUserSourceFileIds: async userId => {
+
         try {
             let result = await module.exports.query(`SELECT user_source_file_id
                                                FROM user_source_files WHERE user_id = $1`,
                                     [userId]);
             return result.rows;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -184,6 +217,7 @@ module.exports = {
     },
 
     getUserSourceFileLocation: async userSourceFileId => {
+
         try {
             let result = await module.exports.query(`SELECT file_location FROM user_source_files 
                                                WHERE user_source_file_id = $1`,
@@ -194,6 +228,7 @@ module.exports = {
             } else {
                 return null;
             }
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -201,6 +236,7 @@ module.exports = {
     },
 
     getUserSourceFileFractalDimension: async userSourceFileId => {
+
         try {
             let result = await module.exports.query(`SELECT fractal_dimension FROM user_source_files 
                                                WHERE user_source_file_id = $1`,
@@ -215,71 +251,65 @@ module.exports = {
     },
 
     getHeatmapData: async () => {
+
         try {
             let result = await module.exports.query(`SELECT date_added FROM user_source_files ORDER BY date_added`);
 
-            // Get number of rows occurring in specified hours within a week period
-            let totalHours = {};
-            let cnt = 0;
+            // List of the sum of submissions for each day and hour of the week base list
+            let daysAndHoursList =[];
             for(let d=0; d<7; d++){
                 for (let h=0; h<24; h++) {
-                    totalHours[cnt] = 0;
-                    cnt++;
+                    daysAndHoursList.push({day: d+1, hour: h+1, value: 0});
                 }
             }
 
+            // Fill list with all submission objects
+            let dataUseAll = JSON.parse(JSON.stringify( daysAndHoursList )); // Clone array
             let day;
             let hour;
             for (let row of result.rows) {
                 day = row.date_added.getDay();
                 hour = row.date_added.getHours();
-                totalHours[(day*24) + hour] = totalHours[(day*24) + hour] + 1;
+                dataUseAll.push({day: day, hour: hour, value: 1});
             }
 
-            // Format dates as day, hour, and # of occurrences
-            let dataUseAll =[];
-            cnt = 0;
-            for(let d=0; d<7; d++){
-                for (let h=0; h<24; h++) {
-                    dataUseAll.push({day: d+1, hour: h+1, value: totalHours[cnt]});
-                    cnt++;
+            // Group the submission objects by day and hour, then take sum
+            dataUseAll = Object.values(dataUseAll.reduce(function(r, e) {
+                let key = e.day + '|' + e.hour;
+                if (!r[key]) r[key] = e;
+                else {
+                    r[key].value += e.value
                 }
-            }
+                return r;
+            }, {}));
 
-            // Clear object
-            totalHours = {};
-            cnt = 0;
-            for(let d=0; d<7; d++){
-                for (let h=0; h<24; h++) {
-                    totalHours[cnt] = 0;
-                    cnt++;
-                }
-            }
 
             // Get rows that were added in the past week
             result = await module.exports.query(`SELECT date_added FROM user_source_files
                                           WHERE date_added > NOW() - interval '7 days'
                                           ORDER BY date_added`);
 
-            day;
-            hour;
+
+            // Fill list with all submission objects in past week
+            let dataUseWeek = JSON.parse(JSON.stringify( daysAndHoursList )); // Clone array
             for (let row of result.rows) {
                 day = row.date_added.getDay();
                 hour = row.date_added.getHours();
-                totalHours[(day*24) + hour] = totalHours[(day*24) + hour] + 1;
+                dataUseWeek.push({day: day, hour: hour, value: 1});
             }
 
-            // Format dates as day, hour, and # of occurrences for last 7 days
-            let dataUseWeek =[];
-            cnt = 0;
-            for(let d=0; d<7; d++){
-                for (let h=0; h<24; h++) {
-                    dataUseWeek.push({day: d+1, hour: h+1, value: totalHours[cnt]});
-                    cnt++;
+            // Group the submission objects by day and hour, then take sum
+            dataUseWeek = Object.values(dataUseWeek.reduce(function(r, e) {
+                let key = e.day + '|' + e.hour;
+                if (!r[key]) r[key] = e;
+                else {
+                    r[key].value += e.value
                 }
-            }
+                return r;
+            }, {}));
 
             return [dataUseAll, dataUseWeek];
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -287,6 +317,7 @@ module.exports = {
     },
 
     getStatistics: async () => {
+
         try {
             let statistics = {"Total Users": 0,
                               "Total User Paintings": 0,
@@ -307,6 +338,20 @@ module.exports = {
             statistics["Total User Source Files"] = result.rows[0].count;
 
             return statistics;
+
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    getUsers: async () => {
+
+        try {
+            let result = await module.exports.query(`SELECT user_id, first_name, last_name, email,
+                                                    account_type, admin_flag, active_flag FROM users`);
+            return result.rows;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -315,13 +360,16 @@ module.exports = {
 
     ////////////////////// Add Data //////////////////////
 
-    addUser: async (userAccount, password, accountType) => {
-        try {
+    addUser: async (userAccount, password, accountType, firstName, lastName, email) => {
+
+	    try {
             // Create user in database...prepared statement for sanitation
-            let result = await module.exports.query(`INSERT INTO users (user_account, password, account_type)
-                                               VALUES ($1, $2, $3) RETURNING user_id`,
-                                    [userAccount, password, accountType]);
+            let result = await module.exports.query(`INSERT INTO users (user_account, password,
+                                                    account_type, first_name, last_name, email)
+                                               VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_id`,
+                                    [userAccount, password, accountType, firstName, lastName, email]);
             return result.rows[0].user_id;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -329,25 +377,29 @@ module.exports = {
     },
 
     addUserPainting: async (userId, paintingId, userSourceFileId) => {
+
         try {
             let result = await module.exports.query(`INSERT INTO user_paintings
                                                (user_id, painting_id, user_source_file_id)
                                                VALUES ($1, $2, $3) RETURNING user_painting_id`,
                                     [userId, paintingId, userSourceFileId]);
             return result.rows[0].user_painting_id;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
         }
     },
 
-    addPainting: async (fractalDimension, name, painter, yearCreated) => {
+    addPainting: async (name, painter, yearCreated) => {
+
         try {
             let result = await module.exports.query(`INSERT INTO paintings
-                                               (fractal_dimension, name, painter, year_created)
-                                               VALUES ($1, $2, $3, $4) RETURNING painting_id`,
-                                    [fractalDimension, name, painter, yearCreated]);
+                                               (name, painter, year_created)
+                                               VALUES ($1, $2, $3) RETURNING painting_id`,
+                                    [name, painter, yearCreated]);
             return result.rows[0].painting_id;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -355,12 +407,14 @@ module.exports = {
     },
 
     addUserSourceFile: async (userId) => {
+
         try {
             let result = await module.exports.query(`INSERT INTO user_source_files
                                                (user_id)
                                                VALUES ($1) RETURNING user_source_file_id`,
                                     [userId]);
             return result.rows[0].user_source_file_id;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -370,11 +424,28 @@ module.exports = {
     ////////////////////// Update Data //////////////////////
 
     updatePaintingFileLocation: async (paintingId, fileLocation) => {
+
         try {
             let result = await module.exports.query(`UPDATE paintings SET file_location = $1,
                                                     date_last_updated = NOW()
                                                     WHERE painting_id = $2`,[fileLocation, paintingId]);
             return result;
+
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updatePaintingFractalDimension: async (paintingId, fractalDimension) => {
+
+        try {
+            let result = await module.exports.query(`UPDATE paintings SET fractal_dimension = $1,
+                                                    date_last_updated = NOW()
+                                                    WHERE painting_id = $2`,
+                                         [fractalDimension, paintingId]);
+            return result;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -382,12 +453,29 @@ module.exports = {
     },
 
     updateUserSourceFileLocation: async (userSourceFileId, fileLocation) => {
+
         try {
             let result = await module.exports.query(`UPDATE user_source_files SET file_location = $1,
                                                     date_last_updated = NOW()
                                                     WHERE user_source_file_id = $2`,
                                          [fileLocation, userSourceFileId]);
             return result;
+
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updateUserBlocksFileLocation: async (userSourceFileId, blocksFileLocation) => {
+
+        try {
+            let result = await module.exports.query(`UPDATE user_source_files SET blocks_file_location = $1,
+                                                    date_last_updated = NOW()
+                                                    WHERE user_source_file_id = $2`,
+                [blocksFileLocation, userSourceFileId]);
+            return result;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -395,11 +483,13 @@ module.exports = {
     },
 
     updateUserPaintingFileLocation: async (userPaintingId, fileLocation) => {
+
         try {
             let result = await module.exports.query(`UPDATE user_paintings SET file_location = $1,
                                                     date_last_updated = NOW()
                                                     WHERE user_painting_id = $2`,[fileLocation, userPaintingId]);
             return result;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -407,24 +497,70 @@ module.exports = {
     },
 
     updateUserSourceFractalDimension: async (userSourceFileId, fractalDimension) => {
+
         try {
             let result = await module.exports.query(`UPDATE user_source_files SET fractal_dimension = $1,
                                                     date_last_updated = NOW()
                                                     WHERE user_source_file_id = $2`,
                 [fractalDimension, userSourceFileId]);
             return result;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
         }
     },
 
-    updateLoginDate: async (userId) => {
+    updateLoginDate: async userId => {
+
         try {
             let result = await module.exports.query(`UPDATE users SET last_login = NOW(),
                                                     date_last_updated = NOW()
                                                     WHERE user_id = $1`,[userId]);
             return result;
+
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updateWatermark: async userPaintingId => {
+
+        try {
+            let result = await module.exports.query(`UPDATE user_paintings SET watermark_flag = 0,
+                                                    date_last_updated = NOW()
+                                                    WHERE user_painting_id = $1`,[userPaintingId]);
+            return result;
+
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updateAdminFlag: async (userId, value) => {
+
+        try {
+            let result = await module.exports.query(`UPDATE users SET admin_flag = $1,
+                                                    date_last_updated = NOW()
+                                                    WHERE user_id = $2`,[value, userId]);
+            return result.rowCount;
+
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    updateActiveFlag: async (userId, value) => {
+
+        try {
+            let result = await module.exports.query(`UPDATE users SET active_flag = $1,
+                                                    date_last_updated = NOW()
+                                                    WHERE user_id = $2`,[value, userId]);
+            return result.rowCount;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);

@@ -64,6 +64,7 @@ html {
     font-size: 150%;
     text-align: center;
     text-shadow: -2px 4px 4px #000;
+    margin-bottom: 150px;
 }
 
 #fractalImg {
@@ -81,4 +82,38 @@ html {
 
 .centerDiv p {
     width: 500px;
+}
+
+#teamDiv {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    margin-bottom: 150px;
+}
+
+.teamMember {
+    margin: 50px;
+    text-align: center;
+}
+
+.teamMemberLinks {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+}
+
+.teamMemberPic {
+    width: 250px;
+}
+
+.teamMemberName {
+    text-align: center;
+    font-size: 30pt;
+}
+
+.mediaImg {
+    width: 75px;
 }

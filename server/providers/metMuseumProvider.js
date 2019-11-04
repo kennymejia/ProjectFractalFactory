@@ -60,21 +60,23 @@ var saveImageToDisk = (url, localPath) => {
 
 var fillDatabase = async paintings => {
     for (let painting of paintings) {
-        // TODO Calculate fractal dimension
-        let fractalDimension = 1.5;
-        let paintingId = await provider.addPainting(fractalDimension, painting.name,
+        let paintingId = await provider.addPainting(painting.name,
                                             painting.painter || "Unidentified Artist",
                                                     painting.yearCreated);
 
-        let filePath = `${process.env.PAINTINGDIRECTORY}/${paintingId}.jpg`;
+        // Add file path
+        let filePath = `${process.env.PAINTINGDIRECTORY}${paintingId}.jpg`;
         saveImageToDisk(painting.link, filePath);
-
         await provider.updatePaintingFileLocation(paintingId, filePath);
+
+        // Add fractal dimension -- if null, it means the painting was not RGB format
+        let fractalDimension = await nn.calculateFractalDimension(filePath);
+        await provider.updatePaintingFractalDimension(paintingId, fractalDimension);
     }
 };
 
 var main = async () => {
-    let paintings = await fetchPaintings(3);
+    let paintings = await fetchPaintings( parseInt(process.argv[2]) );
     await fillDatabase(paintings);
 };
 

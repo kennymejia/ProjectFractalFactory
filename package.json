@@ -4,7 +4,12 @@
   "description": "A service that takes files of code and produces a unique painting based on the fractal dimension of the code.",
   "main": "fractalFactory.js",
   "scripts": {
-    "devStart": "nodemon server/fractalFactory.js"
+    "start": "pm2 start server/fractalFactory.js",
+    "devStart": "nodemon server/fractalFactory.js",
+    "addPaintings": "node --http-parser=legacy ./server/providers/metMuseumProvider.js",
+    "deploy": "npm install && apt-get update && npm run installPython",
+    "installPython": "apt-get install python3.7 && npm run pythonPkgs",
+    "pythonPkgs": "pip install matplotlib Pillow numpy imageio"
   },
   "repository": {
     "type": "git",
@@ -24,26 +29,32 @@
   "homepage": "https://github.com/StentonRR/Fractal-Factory#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "dotenv": "^8.1.0",
+    "cas-authentication": "0.0.8",
+    "dotenv": "^8.2.0",
     "ejs": "^2.7.1",
     "errorhandler": "^1.5.1",
     "express": "^4.17.1",
     "express-flash": "0.0.2",
-    "express-session": "^1.16.2",
+    "express-session": "^1.17.0",
     "formidable": "^1.2.1",
     "get-folder-size": "^2.0.1",
+    "https-proxy-agent": "^3.0.0",
+    "jimp": "^0.8.5",
     "jquery": "^3.4.1",
-    "log4js": "^5.2.1",
+    "log4js": "^5.2.2",
     "method-override": "^3.0.0",
     "node-fetch": "^2.6.0",
     "passport": "^0.4.0",
+    "passport-cas2": "0.0.11",
+    "passport-facebook": "^3.0.0",
     "passport-local": "^1.0.0",
+    "passport-twitter": "^1.0.4",
     "pg": "^7.12.1",
-    "pm2": "^3.5.1",
-    "popper.js": "^1.15.0",
+    "pm2": "^4.1.2",
+    "python-shell": "^1.0.8",
     "request": "^2.88.0"
   },
   "devDependencies": {
-    "nodemon": "^1.19.3"
+    "nodemon": "^1.19.4"
   }
 }
