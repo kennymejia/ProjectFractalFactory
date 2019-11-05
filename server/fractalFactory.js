@@ -19,6 +19,12 @@ const getSize = require('get-folder-size');
 const getSizeAsync = promisify(getSize);
 const jimp = require("jimp");
 
+const coinbase = require('coinbase-commerce-node');
+const Client = coinbase.Client;
+const Event = coinbase.resources.Event;
+
+Client.init(process.env.COINBASEKEY);
+
 // Initialize passport with some database functions for authentication
 initializePassport.initialize(
     passport,
@@ -119,7 +125,7 @@ app.use('/purchase', express.static('client/public')); // purchase/:id is a conc
 app.get('/purchase/:id', checkAuthenticated, async (req,res) => {
     let userPaintingId = req.params.id;
     res.render('purchase.ejs', { paintingLink: `/user-painting/${userPaintingId}`,
-                                 paintingFullLink: `${process.env.HOST}/user-painting/${userPaintingId}`,
+                                 paintingFullLink: `${process.env.HOST}/user-painting/${userPaintingId}`, // For canvas pop
                                  canvasPopKey: process.env.CANVASPOPKEY} );
 });
 
@@ -302,6 +308,12 @@ app.post('/profile', checkAuthenticated, checkAdmin, async (req, res) => {
     }
 });
 
+// Validate coinbase purchase and remove watermark
+// See here for webhook implementation: https://commerce.coinbase.com/docs/api/#charges
+app.post('/watermark', async (req, res) => {
+    await provider.updateWatermark(req.body.paintingId); 
+});
+
 // Log a user out
 app.delete('/logout', checkAuthenticated, (req, res) => {
     req.logOut(); // Setup by passport
@@ -386,9 +398,9 @@ app.get('/heatmap', checkAuthenticated, checkAdmin, async (req, res) => {
     res.send(heatmapDatasets);
 });
 
-// Simple 404 page
-app.get('*', function(req, res) {
-    res.status(404).send('404 Error -- The droids you are looking for are not here');
+// 404 = return to login/profile
+app.get('*', (req, res) => {
+    res.redirect('/');
 });
 
 

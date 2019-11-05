@@ -559,7 +559,7 @@ module.exports = {
     updateWatermark: async userPaintingId => {
 
         try {
-            let result = await module.exports.query(`UPDATE user_paintings SET watermark_flag = 0,
+            let result = await module.exports.query(`UPDATE user_paintings SET watermark_flag = False,
                                                     date_last_updated = NOW()
                                                     WHERE user_painting_id = $1`,[userPaintingId]);
             return result;

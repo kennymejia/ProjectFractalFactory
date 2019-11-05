@@ -24,7 +24,7 @@
         <h2 class="ff">Here is your painting!</h2>
 
         <div id="paintingDiv">
-            <img src="<%=paintingLink%>"/>
+            <img id="painting" src="<%=paintingLink%>"/>
         </div>
 
         <div id="cp-store-root" data-cp-settings='{ "access_key": "<%=canvasPopKey%>", "modal": true }'></div>
@@ -48,17 +48,21 @@
         </div>
 
         <div id="watermarkModal" class="modal">
-            <form class="modal-content animate" action="https://commerce.coinbase.com/checkout/edfc4b6e-886a-4199-862f-5a21e9af3d51">
+            <div class="modal-content animate">
                 <div class="imgcontainer">
                     <span onclick="document.getElementById('watermarkModal').style.display='none'" class="close" title="Close Modal">&times;</span>
                     <img src="/images/cart.png" alt="Cart" id="cartSymbol">
                 </div>
                 <div class="container">
-                    <button id="bitcoinBtn" type="submit">
-                        <img src="/images/bitcoin.png" alt="Bitcoin" id="bitcoinSymbol">Pay with Crypto
-                    </button>
+
+
+                     <a class="buy-with-crypto" data-custom="<%=paintingFullLink%>" href="https://commerce.coinbase.com/checkout/edfc4b6e-886a-4199-862f-5a21e9af3d51">
+                        <button id="bitcoinBtn" type="submit">
+                            <img src="/images/bitcoin.png" alt="Bitcoin" id="bitcoinSymbol">Pay with Crypto
+                        </button>
+                    </a>
                 </div>
-            </form>
+            </div>
         </div>
 
     </div>

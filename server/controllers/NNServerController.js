@@ -79,7 +79,7 @@ module.exports = {
             let data = await pythonShellRun('textToBlocks.py', options);
 
             return data[0];
-            
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
