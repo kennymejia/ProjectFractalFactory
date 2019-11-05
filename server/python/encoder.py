@@ -1,3 +1,4 @@
+import sys
 import os
 import numpy as np
 
@@ -15,7 +16,8 @@ import gdown
 from PIL import Image
 from ISR.models import RDN
 
-
+import warnings
+warnings.filterwarnings("ignore")
 
 # Prepare image
 def prepareImg(imageFilePath,
@@ -142,7 +144,7 @@ def upResolution(lowResImg,
   """
 
   rdn = RDN(arch_params={'C':6, 'D':20, 'G':64, 'G0':64, 'x':2})
-  rdn.model.load_weights('rdn-C6-D20-G64-G064-x2_ArtefactCancelling_epoch219.hdf5')
+  rdn.model.load_weights(modelsPath + 'rdn-C6-D20-G64-G064-x2_ArtefactCancelling_epoch219.hdf5')
 
   lowResImg = rdn.predict(lowResImg)
   srImg = rdn.predict(lowResImg)
@@ -158,31 +160,31 @@ def loadAEs(modelsPath):
   """Loads all of the encoder decoder networks
 
   # Arguments
-      modelsPath: path to where all the mdeols are stored
+      modelsPath: path to where all the models are stored
   """
 
   if os.path.isfile(modelsPath + 'bamencoder.h5'):
     bamencoder = load_model(modelsPath + 'bamencoder.h5')
   else:
-    gdown.download('https://drive.google.com/uc?id=1-4Amye8mspWMJk7Z8bo-RyapPZFbZ6L6', modelsPath + 'bamencoder.h5', quiet=False)
+    gdown.download('https://drive.google.com/uc?id=1-4Amye8mspWMJk7Z8bo-RyapPZFbZ6L6', modelsPath + 'bamencoder.h5', quiet=True)
     bamencoder = load_model(modelsPath + 'bamencoder.h5')
 
   if os.path.isfile(modelsPath + 'bamdecoder.h5'):
     bamdecoder = load_model(modelsPath + 'bamdecoder.h5')
   else:
-    gdown.download('https://drive.google.com/uc?id=1-7gzxzub6QKX9RRbz-1Z8cEICK3fcR8U', modelsPath + 'bamdecoder.h5', quiet=False)
+    gdown.download('https://drive.google.com/uc?id=1-7gzxzub6QKX9RRbz-1Z8cEICK3fcR8U', modelsPath + 'bamdecoder.h5', quiet=True)
     bamdecoder = load_model(modelsPath + 'bamdecoder.h5')
 
   if os.path.isfile(modelsPath + 'encoder.h5'):
     encoder = load_model(modelsPath + 'encoder.h5')
   else:
-    gdown.download('https://drive.google.com/uc?id=1DcFDRVtt88SFq7xkUF_JXw3Aj1O-WSLg', modelsPath + 'encoder.h5', quiet=False)
+    gdown.download('https://drive.google.com/uc?id=1DcFDRVtt88SFq7xkUF_JXw3Aj1O-WSLg', modelsPath + 'encoder.h5', quiet=True)
     encoder = load_model(modelsPath + 'encoder.h5')
 
   if os.path.isfile(modelsPath + 'decoder.h5'):
     decoder = load_model(modelsPath + 'decoder.h5')
   else:
-    gdown.download('https://drive.google.com/uc?id=1ndoFZ_wPM937E75Pi9n3Mq3LVJDLDY5p', modelsPath + 'decoder.h5', quiet=False)
+    gdown.download('https://drive.google.com/uc?id=1ndoFZ_wPM937E75Pi9n3Mq3LVJDLDY5p', modelsPath + 'decoder.h5', quiet=True)
     decoder = load_model(modelsPath + 'decoder.h5')
 
   return encoder, decoder, bamencoder, bamdecoder
@@ -208,23 +210,38 @@ def produceNewArt(modelsPath, imageFilePath, bamFilePath,
 
     z_mean, z_log_var, z = encodeImg(encoder, inputImg)
 
-    latentDimensions = 512
+    latentDimensions = 1024
     b_mean, b_log_var, b = encodeBAM(bamFilePath, bamencoder, latentDimensions)
 
-    #TODO: use the FD to create the rate by which the art is influenced by the
-    #      code, then replace the 0.5s
+    dif = abs(artFD - bamFD)
+    bamValue = 1 - 1 / (1 + dif)
+    paintingValue = 1 - bamValue
 
-    newArt = decodeVec(decoder, b*0.5 + z*0.5, trainedImgSize, saveArt)
+    newArt = decodeVec(decoder, b*paintingValue + z*bamValue, trainedImgSize, saveArt)
 
-    newArtHiRes = upResolution(newArt, "HiRes" + saveArt)
+    newArtHiRes = upResolution(newArt, saveArt)
 
     return newArtHiRes
 
 
 
-modelsPath = './server/python/'
-imageFilePath = './server/python/painting.jpg'  # some local image of art
-bamFilePath = './server/python//bam.jpg'  # some BAM image
+modelsPath = sys.argv[6]
+
+bamFilePath = sys.argv[1]  # BAM image
+bamFD = float(sys.argv[3]) # BAM image fractal dimension
+
+imageFilePath = sys.argv[2]  # Image of art
+artFD = float(sys.argv[4]) # Art fractal dimension
+
+saveArt = sys.argv[5]+'.png'
+
+# Get weights
+gdown.download('https://drive.google.com/uc?id=1_1GGoHF5oq3W_iVVxx1SRDIa_mjwoe26',
+                modelsPath + 'rdn-C6-D20-G64-G064-x2_ArtefactCancelling_epoch219.hdf5',
+                quiet=True)
 
 newArtHiRes = produceNewArt(modelsPath, imageFilePath, bamFilePath,
-                            artFD=0.5, bamFD=0.5, saveArt='test.png')
+                            artFD, bamFD, saveArt)
+
+#Output location of the new painting
+print(saveArt)

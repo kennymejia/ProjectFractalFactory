@@ -19,6 +19,12 @@ const getSize = require('get-folder-size');
 const getSizeAsync = promisify(getSize);
 const jimp = require("jimp");
 
+const coinbase = require('coinbase-commerce-node');
+const Client = coinbase.Client;
+const Event = coinbase.resources.Event;
+
+Client.init(process.env.COINBASEKEY);
+
 // Initialize passport with some database functions for authentication
 initializePassport.initialize(
     passport,
@@ -118,10 +124,19 @@ app.get('/upload', checkAuthenticated, (req,res) => {
 app.use('/purchase', express.static('client/public')); // purchase/:id is a conceptual link, not a physical one
 app.get('/purchase/:id', checkAuthenticated, async (req,res) => {
     let userPaintingId = req.params.id;
-    res.render('purchase.ejs', { paintingLink: `/user-painting/${userPaintingId}`, canvasPopKey: process.env.CANVASPOPKEY} );
+    res.render('purchase.ejs', { paintingLink: `/user-painting/${userPaintingId}`,
+                                 paintingFullLink: `${process.env.HOST}/user-painting/${userPaintingId}`, // For canvas pop
+                                 canvasPopKey: process.env.CANVASPOPKEY} );
 });
 
-//==============================================================================================
+//////////////////////  Data routing //////////////////////
+
+// Either log in a user with an account or deny access
+app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
+    successRedirect: '/profile',
+    failureRedirect: '/',
+    failureFlash: true
+}));
 
 // Calling facebook strategy and redirecting to facebook login
 app.route('/auth/facebook').get(passport.authenticate('facebook', { scope: ['email'] }));
@@ -147,18 +162,7 @@ app.route('/auth/cas').get(
     passport.authenticate('cas', { failureRedirect: '/'}),
     function(req, res) {
         res.redirect('/profile');
-    });
-    
-//===============================================================================================
-
-//////////////////////  Data routing //////////////////////
-
-// Either log in a user with an account or deny access
-app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-    successRedirect: '/profile',
-    failureRedirect: '/',
-    failureFlash: true
-}));
+});
 
 // Register new user with provided details
 // TODO Prevent the same user account --- username specifically
@@ -304,6 +308,12 @@ app.post('/profile', checkAuthenticated, checkAdmin, async (req, res) => {
     }
 });
 
+// Validate coinbase purchase and remove watermark
+// See here for webhook implementation: https://commerce.coinbase.com/docs/api/#charges
+app.post('/watermark', async (req, res) => {
+    await provider.updateWatermark(req.body.paintingId); 
+});
+
 // Log a user out
 app.delete('/logout', checkAuthenticated, (req, res) => {
     req.logOut(); // Setup by passport
@@ -388,9 +398,9 @@ app.get('/heatmap', checkAuthenticated, checkAdmin, async (req, res) => {
     res.send(heatmapDatasets);
 });
 
-// Simple 404 page
-app.get('*', function(req, res) {
-    res.status(404).send('404 Error -- The droids you are looking for are not here');
+// 404 = return to login/profile
+app.get('*', (req, res) => {
+    res.redirect('/');
 });
 
 

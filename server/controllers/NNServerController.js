@@ -17,6 +17,7 @@ module.exports = {
 
     // Returns the fractal dimension of the given file
     calculateFractalDimension: async fileLocation => {
+
         try {
             let options = {
                 scriptPath: process.env.PYTHONDIRECTORY,
@@ -27,6 +28,7 @@ module.exports = {
             let data = await pythonShellRun('fractalDimension.py', options);
 
             return parseFloat(data[0]);
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -35,14 +37,28 @@ module.exports = {
 
     // Creates a user painting, creates database entry, and returns the id
     createPainting: async (userId, userSourceFileId, paintingId) => {
+
         try {
             let userPaintingId = await provider.addUserPainting(userId, paintingId, userSourceFileId);
 
-            // Use the original painting for now as the user painting
-            let userPaintingLocation = await provider.getPaintingLocation(paintingId);
-            await provider.updateUserPaintingFileLocation(userPaintingId, userPaintingLocation);
+            let options = {
+                scriptPath: process.env.PYTHONDIRECTORY,
+                args: [ await provider.getUserSourceBlocksFileLocation(userSourceFileId),
+                        await provider.getPaintingLocation(paintingId),
+                        await provider.getUserSourceFileFractalDimension(userSourceFileId),
+                        await provider.getPaintingFractalDimension(paintingId),
+                        process.env.USERPAINTINGDIRECTORY+userPaintingId,
+                        process.env.MODELDIRECTORY ]
+            };
+
+            // Python output custom painting location
+            let data = await pythonShellRun('encoder.py', options);
+
+            // Update the user painting file location to reflect newly generated painting
+            await provider.updateUserPaintingFileLocation(userPaintingId, data[0]);
 
             return userPaintingId;
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
@@ -52,6 +68,7 @@ module.exports = {
     // Creates BAM or blocks file of user source file, updates user source file entry in database, and
     // returns location of the blocks file when done
     createBlocks: async (userId, userSourceFileId, userSourceFileLocation) => {
+
         try {
             let options = {
                 scriptPath: process.env.PYTHONDIRECTORY,
@@ -62,6 +79,7 @@ module.exports = {
             let data = await pythonShellRun('textToBlocks.py', options);
 
             return data[0];
+
         } catch(e) {
             console.log(e);
             logController.logger.error(e);

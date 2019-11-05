@@ -1,12 +1,14 @@
 # Don't track content of these folders
 node_modules/
 server/logs/*
+log_file
 .idea/
-server/sourcePaintingExamples/
-server/paintingExamples/
-server/uploads/
-server/blockFileExamples/
+server/sourcePaintings/
+server/sourceFiles/
+server/paintings/
+server/blocks/
 server/python/__pycache__
+server/python/model
 
 package-lock.json
 .env

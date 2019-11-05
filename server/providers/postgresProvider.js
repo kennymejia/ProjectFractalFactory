@@ -137,14 +137,11 @@ module.exports = {
     getPaintingIds: async fractalDimension => {
 
         try {
-            // TODO Change this back from random after demo
-            // let result = await module.exports.query(`SELECT painting_id
-            //                                    FROM paintings ORDER BY ABS(fractal_dimension - $1)
-            //                                    LIMIT ${process.env.TOPPAINTINGNUMBER}`,
-            //                         [fractalDimension]);
             let result = await module.exports.query(`SELECT painting_id
-                                               FROM paintings ORDER BY RANDOM()
-                                               LIMIT ${process.env.TOPPAINTINGNUMBER}`);
+                                               FROM paintings ORDER BY ABS(fractal_dimension - $1)
+                                               LIMIT ${process.env.TOPPAINTINGNUMBER}`,
+                                    [fractalDimension]);
+
             return result.rows;
 
         } catch(e) {
@@ -180,6 +177,21 @@ module.exports = {
             } else {
                 return null;
             }
+
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    getPaintingFractalDimension: async paintingId => {
+
+        try {
+            let result = await module.exports.query(`SELECT fractal_dimension FROM paintings 
+                                               WHERE painting_id = $1`,
+                [paintingId]);
+
+            return result.rows[0].fractal_dimension || 1; // If no fractal dimension, default to 1
 
         } catch(e) {
             console.log(e);
@@ -225,6 +237,25 @@ module.exports = {
 
             if (result.rows){
                 return result.rows[0].file_location;
+            } else {
+                return null;
+            }
+
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
+    getUserSourceBlocksFileLocation: async userSourceFileId => {
+
+        try {
+            let result = await module.exports.query(`SELECT blocks_file_location FROM user_source_files 
+                                               WHERE user_source_file_id = $1`,
+                [userSourceFileId]);
+
+            if (result.rows){
+                return result.rows[0].blocks_file_location;
             } else {
                 return null;
             }
@@ -528,7 +559,7 @@ module.exports = {
     updateWatermark: async userPaintingId => {
 
         try {
-            let result = await module.exports.query(`UPDATE user_paintings SET watermark_flag = 0,
+            let result = await module.exports.query(`UPDATE user_paintings SET watermark_flag = False,
                                                     date_last_updated = NOW()
                                                     WHERE user_painting_id = $1`,[userPaintingId]);
             return result;
