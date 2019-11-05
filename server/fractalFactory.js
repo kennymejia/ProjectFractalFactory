@@ -118,10 +118,19 @@ app.get('/upload', checkAuthenticated, (req,res) => {
 app.use('/purchase', express.static('client/public')); // purchase/:id is a conceptual link, not a physical one
 app.get('/purchase/:id', checkAuthenticated, async (req,res) => {
     let userPaintingId = req.params.id;
-    res.render('purchase.ejs', { paintingLink: `/user-painting/${userPaintingId}`, canvasPopKey: process.env.CANVASPOPKEY} );
+    res.render('purchase.ejs', { paintingLink: `/user-painting/${userPaintingId}`,
+                                 paintingFullLink: `${process.env.HOST}/user-painting/${userPaintingId}`,
+                                 canvasPopKey: process.env.CANVASPOPKEY} );
 });
 
-//==============================================================================================
+//////////////////////  Data routing //////////////////////
+
+// Either log in a user with an account or deny access
+app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
+    successRedirect: '/profile',
+    failureRedirect: '/',
+    failureFlash: true
+}));
 
 // Calling facebook strategy and redirecting to facebook login
 app.route('/auth/facebook').get(passport.authenticate('facebook', { scope: ['email'] }));
@@ -147,18 +156,7 @@ app.route('/auth/cas').get(
     passport.authenticate('cas', { failureRedirect: '/'}),
     function(req, res) {
         res.redirect('/profile');
-    });
-    
-//===============================================================================================
-
-//////////////////////  Data routing //////////////////////
-
-// Either log in a user with an account or deny access
-app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-    successRedirect: '/profile',
-    failureRedirect: '/',
-    failureFlash: true
-}));
+});
 
 // Register new user with provided details
 // TODO Prevent the same user account --- username specifically

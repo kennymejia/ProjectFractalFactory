@@ -8,6 +8,7 @@
     <link href="css/purchase.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Long+Cang&display=swap" rel="stylesheet">
     <script src="js/purchase.js"></script>
+    <script src="https://commerce.coinbase.com/v1/checkout.js"></script>
 </head>
 
 <body>
@@ -40,10 +41,24 @@
         </script>
 
         <div id="purchaseDiv">
-            <button class="btn">Remove Watermark</button>
-            <button class="btn" data-cp-url="https://s3.amazonaws.com/canvaspop-popupstore-dev/2013/09/15/originals/516bb914bb2bf0b6fa5ddf42ebcc3993/1ffab4942c0bb66a4b509ebc60737036.JPG">
+            <button class="btn" id="watermarkBtn">Remove Watermark</button>
+            <button class="btn" data-cp-url="<%=paintingFullLink%>">
                 Buy Canvas Print
             </button>
+        </div>
+
+        <div id="watermarkModal" class="modal">
+            <form class="modal-content animate" action="https://commerce.coinbase.com/checkout/edfc4b6e-886a-4199-862f-5a21e9af3d51">
+                <div class="imgcontainer">
+                    <span onclick="document.getElementById('watermarkModal').style.display='none'" class="close" title="Close Modal">&times;</span>
+                    <img src="/images/cart.png" alt="Cart" id="cartSymbol">
+                </div>
+                <div class="container">
+                    <button id="bitcoinBtn" type="submit">
+                        <img src="/images/bitcoin.png" alt="Bitcoin" id="bitcoinSymbol">Pay with Crypto
+                    </button>
+                </div>
+            </form>
         </div>
 
     </div>
