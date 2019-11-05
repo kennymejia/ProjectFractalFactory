@@ -311,7 +311,7 @@ app.post('/profile', checkAuthenticated, checkAdmin, async (req, res) => {
 // Validate coinbase purchase and remove watermark
 // See here for webhook implementation: https://commerce.coinbase.com/docs/api/#charges
 app.post('/watermark', async (req, res) => {
-    await provider.updateWatermark(req.body.paintingId); 
+    await provider.updateWatermark(req.body.paintingId);
 });
 
 // Log a user out
