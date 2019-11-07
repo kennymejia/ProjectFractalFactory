@@ -3,10 +3,10 @@ node_modules/
 server/logs/*
 log_file
 .idea/
-server/sourcePaintings/
-server/sourceFiles/
-server/paintings/
-server/blocks/
+sourcePaintings/
+sourceFiles/
+paintings/
+blocks/
 server/python/__pycache__
 server/python/model
 
