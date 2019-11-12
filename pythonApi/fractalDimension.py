@@ -50,7 +50,7 @@ def fractal_dimension_minkowski_bouligand(Z, threshold=0.9):
 
         # Fit the successive log(sizes) with log (counts)
         coeffs = np.polyfit(np.log(sizes), np.log(counts), 1)
-        print(-coeffs[0])
+        return -coeffs[0]
 
 def fractal_dimension_hausdorff(image):
     # Prepare image
@@ -84,7 +84,4 @@ def fractal_dimension_hausdorff(image):
         # linear fit, polynomial of degree 1
         coeffs=np.polyfit(np.log(scales), np.log(Ns), 1)
 
-        print(-coeffs[0]) #the fractal dimension is the OPPOSITE of the fitting coefficient
-
-# Execute specified fractal dimension function
-fractal_dimension_hausdorff(sys.argv[1])
+        return -coeffs[0] #the fractal dimension is the OPPOSITE of the fitting coefficient
