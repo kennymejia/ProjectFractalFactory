@@ -49,14 +49,6 @@ var fetchPaintings = async amount => {
   return paintings;
 };
 
-var saveImageToDisk = (url, localPath) => {
-    let file = fs.createWriteStream(localPath);
-    https.get(url, res => {
-        if (res.statusCode === 200){
-            res.pipe(file);
-        }
-    });
-};
 
 var fillDatabase = async paintings => {
     for (let painting of paintings) {
@@ -66,12 +58,25 @@ var fillDatabase = async paintings => {
 
         // Add file path
         let filePath = `${process.env.PAINTINGDIRECTORY}${paintingId}.jpg`;
-        saveImageToDisk(painting.link, filePath);
-        await provider.updatePaintingFileLocation(paintingId, filePath);
 
-        // Add fractal dimension -- if null, it means the painting was not RGB format
-        let fractalDimension = await nn.calculateFractalDimension(filePath);
-        await provider.updatePaintingFractalDimension(paintingId, fractalDimension);
+        // Save image to disk
+        let file = fs.createWriteStream(filePath);
+        https.get(painting.link, res => {
+            if (res.statusCode === 200){
+                res.pipe(file);
+
+                res.on('end', async() => {
+
+                    await provider.updatePaintingFileLocation(paintingId, filePath);
+
+                    // Add fractal dimension -- if null, it means the painting was not RGB format
+                    let fractalDimension = await nn.calculateFractalDimension(filePath, 'painting');
+
+                    await provider.updatePaintingFractalDimension(paintingId, fractalDimension);
+                });
+            }
+        });
+
     }
 };
 

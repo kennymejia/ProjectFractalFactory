@@ -7,8 +7,8 @@ sourcePaintings/
 sourceFiles/
 paintings/
 blocks/
-server/python/__pycache__
-server/python/model
+pythonApi/__pycache__
+pythonApi/model
 
 package-lock.json
 .env
