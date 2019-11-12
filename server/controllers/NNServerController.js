@@ -1,11 +1,13 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-const {promisify} = require('util');
-const {PythonShell} = require('python-shell');
-const pythonShellRun = promisify(PythonShell.run);
+const fetch = require('node-fetch');
+const formidable = require('formidable');
+const FormData = require('form-data');
+const fs = require('fs');
 const provider = require('../providers/postgresProvider');
 const logController = require('../controllers/logController.js');
+const path = require('path')
 
 // Note that these functions are meant to abstract the processes of calculating the fractal dimension, creating
 // the user painting, and creating the blocks files. It is done locally, but may be changed to be done on another
@@ -16,23 +18,30 @@ const logController = require('../controllers/logController.js');
 module.exports = {
 
     // Returns the fractal dimension of the given file
-    calculateFractalDimension: async fileLocation => {
+    calculateFractalDimension: async (fileLocation, type) => {
 
         try {
-            let options = {
-                scriptPath: process.env.PYTHONDIRECTORY,
-                args: [fileLocation]
+
+            // Stream image file to API
+            const formData = new FormData();
+            formData.append('file', fs.createReadStream(fileLocation));
+            formData.append('type', type);
+
+            let request = {
+                method: 'POST',
+                body: formData
             };
 
-            // Get python output in a list (should just be the fractal dimension)
-            let data = await pythonShellRun('fractalDimension.py', options);
+            let response = await fetch(`${process.env.PYTHONAPI}/fractal-dimension`, request);
+            response = await response.json();
 
-            return parseFloat(data[0]);
+            return response;
 
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
         }
+
     },
 
     // Creates a user painting, creates database entry, and returns the id
@@ -41,21 +50,28 @@ module.exports = {
         try {
             let userPaintingId = await provider.addUserPainting(userId, paintingId, userSourceFileId);
 
-            let options = {
-                scriptPath: process.env.PYTHONDIRECTORY,
-                args: [ await provider.getUserSourceBlocksFileLocation(userSourceFileId),
-                        await provider.getPaintingLocation(paintingId),
-                        await provider.getUserSourceFileFractalDimension(userSourceFileId),
-                        await provider.getPaintingFractalDimension(paintingId),
-                        process.env.USERPAINTINGDIRECTORY+userPaintingId,
-                        process.env.MODELDIRECTORY ]
+            // Stream image file to API
+            const formData = new FormData();
+            formData.append('userSourceFile', fs.createReadStream(await provider.getUserSourceBlocksFileLocation(userSourceFileId)));
+            formData.append('paintingFile', fs.createReadStream(await provider.getPaintingLocation(paintingId)));
+            formData.append('userSourceFileFractalDimension', await provider.getUserSourceFileFractalDimension(userSourceFileId));
+            formData.append('paintingFractalDimension', await provider.getPaintingFractalDimension(paintingId));
+            formData.append('userPaintingId', userPaintingId);
+
+            let request = {
+                method: 'POST',
+                body: formData
             };
 
-            // Python output custom painting location
-            let data = await pythonShellRun('encoder.py', options);
+            let response = await fetch(`${process.env.PYTHONAPI}/create-painting`, request);
+
+            let userPaintingLocation = process.env.USERPAINTINGDIRECTORY+userPaintingId+'.png';
+
+            // Save user painting
+            await response.body.pipe( fs.createWriteStream(userPaintingLocation) );
 
             // Update the user painting file location to reflect newly generated painting
-            await provider.updateUserPaintingFileLocation(userPaintingId, data[0]);
+            await provider.updateUserPaintingFileLocation(userPaintingId, userPaintingLocation);
 
             return userPaintingId;
 
@@ -63,6 +79,7 @@ module.exports = {
             console.log(e);
             logController.logger.error(e);
         }
+
     },
 
     // Creates BAM or blocks file of user source file, updates user source file entry in database, and
@@ -70,19 +87,29 @@ module.exports = {
     createBlocks: async (userId, userSourceFileId, userSourceFileLocation) => {
 
         try {
-            let options = {
-                scriptPath: process.env.PYTHONDIRECTORY,
-                args: [userSourceFileLocation, process.env.BLOCKFILEDIRECTORY]
+
+            // Stream text file to API
+            const formData = new FormData();
+            formData.append('file', fs.createReadStream(userSourceFileLocation));
+
+            let request = {
+                method: 'POST',
+                body: formData
             };
 
-            // Python output will just be the file location of the BAM/blocks file
-            let data = await pythonShellRun('textToBlocks.py', options);
+            let response = await fetch(`${process.env.PYTHONAPI}/generate-bam`, request);
 
-            return data[0];
+            let bamLocation = process.env.BLOCKFILEDIRECTORY+userSourceFileId+'.jpg';
+
+            // Save BAM image
+            await response.body.pipe(fs.createWriteStream(bamLocation));
+
+            return bamLocation;
 
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
         }
+
     }
 };

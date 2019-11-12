@@ -228,7 +228,7 @@ app.post('/upload', checkAuthenticated, async (req, res) => {
             await provider.updateUserBlocksFileLocation(userSourceFileId, userBlocksFileLocation);
 
             // Update entry in database with fractal dimension
-            let fractalDimension = await nn.calculateFractalDimension(userBlocksFileLocation);
+            let fractalDimension = await nn.calculateFractalDimension(userBlocksFileLocation, 'bam');
             await provider.updateUserSourceFractalDimension(userSourceFileId, fractalDimension);
 
             // TODO Security with file permissions
@@ -263,7 +263,7 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
         await provider.updateUserBlocksFileLocation(userSourceFileId, userBlocksFileLocation);
 
         // Update entry in database with fractal dimension
-        let fractalDimension = await nn.calculateFractalDimension(userBlocksFileLocation);
+        let fractalDimension = await nn.calculateFractalDimension(userBlocksFileLocation, 'bam');
         await provider.updateUserSourceFractalDimension(userSourceFileId, fractalDimension);
 
         // TODO Security with file permissions
@@ -292,11 +292,11 @@ app.post('/profile', checkAuthenticated, checkAdmin, async (req, res) => {
 
                 // Add file path
                 let paintingFileLocation = `${process.env.PAINTINGDIRECTORY}${paintingId}.jpg`;
-                let result = await fsp.rename(file[1].path, paintingFileLocation);
+                await fsp.rename(file[1].path, paintingFileLocation);
                 await provider.updatePaintingFileLocation(paintingId, paintingFileLocation);
 
                 // Add fractal dimension -- if null, it means the painting was not RGB format
-                let fractalDimension = await nn.calculateFractalDimension(paintingFileLocation);
+                let fractalDimension = await nn.calculateFractalDimension(paintingFileLocation, 'painting');
                 await provider.updatePaintingFractalDimension(paintingId, fractalDimension);
                 res.redirect('/profile'); // Redirect to same page
             }

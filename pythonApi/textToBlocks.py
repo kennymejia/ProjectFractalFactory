@@ -1,9 +1,8 @@
-import sys
 import os
 import re
 from PIL import Image, ImageDraw, ImageFont
 
-def textToBlocks(sourceFile, outputDirectory):
+def main(sourceFile, outputDirectory):
     text = ""
 
     # Get text of user source file
@@ -57,7 +56,4 @@ def textToBlocks(sourceFile, outputDirectory):
     blocksFileLocation = outputDirectory + sourceFile.split(os.sep)[-1].split(".")[0] + ".jpg"
     img.save(blocksFileLocation)
 
-    print(blocksFileLocation)
-
-# Execute function
-textToBlocks(sys.argv[1], sys.argv[2])
+    return blocksFileLocation

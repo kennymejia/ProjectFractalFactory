@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 import sys
 import os
 import numpy as np
@@ -18,6 +21,22 @@ from ISR.models import RDN
 
 import warnings
 warnings.filterwarnings("ignore")
+
+modelsPath = os.getenv("MODELDIRECTORY")
+
+def load_models():
+    if not os.path.exists(modelsPath):
+        os.makedirs(modelsPath)
+
+    if os.path.isfile(modelsPath + 'rdn-C6-D20-G64-G064-x2_ArtefactCancelling_epoch219.hdf5'):
+        print(" >> super-resolution is already here")
+    else:
+        print(" >> downlaoding super-resolution neural net")
+
+        # Get weights
+        gdown.download('https://drive.google.com/uc?id=1_1GGoHF5oq3W_iVVxx1SRDIa_mjwoe26',
+                        modelsPath + 'rdn-C6-D20-G64-G064-x2_ArtefactCancelling_epoch219.hdf5',
+                        quiet=True)
 
 # Prepare image
 def prepareImg(imageFilePath,
@@ -221,27 +240,5 @@ def produceNewArt(modelsPath, imageFilePath, bamFilePath,
 
     newArtHiRes = upResolution(newArt, saveArt)
 
-    return newArtHiRes
-
-
-
-modelsPath = sys.argv[6]
-
-bamFilePath = sys.argv[1]  # BAM image
-bamFD = float(sys.argv[3]) # BAM image fractal dimension
-
-imageFilePath = sys.argv[2]  # Image of art
-artFD = float(sys.argv[4]) # Art fractal dimension
-
-saveArt = sys.argv[5]+'.png'
-
-# Get weights
-gdown.download('https://drive.google.com/uc?id=1_1GGoHF5oq3W_iVVxx1SRDIa_mjwoe26',
-                modelsPath + 'rdn-C6-D20-G64-G064-x2_ArtefactCancelling_epoch219.hdf5',
-                quiet=True)
-
-newArtHiRes = produceNewArt(modelsPath, imageFilePath, bamFilePath,
-                            artFD, bamFD, saveArt)
-
-#Output location of the new painting
-print(saveArt)
+    # Output location of the new painting
+    return saveArt
