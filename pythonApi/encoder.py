@@ -1,3 +1,7 @@
+#Description: Contains logic for downloading encoder neural network and generating new
+#             painting.
+#Contributor(s): Pablo Rivas
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -31,7 +35,7 @@ def load_models():
     if os.path.isfile(modelsPath + 'rdn-C6-D20-G64-G064-x2_ArtefactCancelling_epoch219.hdf5'):
         print(" >> super-resolution is already here")
     else:
-        print(" >> downlaoding super-resolution neural net")
+        print(" >> downloading super-resolution neural net")
 
         # Get weights
         gdown.download('https://drive.google.com/uc?id=1_1GGoHF5oq3W_iVVxx1SRDIa_mjwoe26',

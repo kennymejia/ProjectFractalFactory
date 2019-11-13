@@ -1,3 +1,10 @@
+/*
+Description: Javascript for results page. Contains logic for displaying loading gif when
+             waiting for results of neural network as well as sending user specified
+             painting to backend to be used for it.
+Contributor(s): Eric Stenton
+*/
+
 var displayLoading = msg => {
     // Create loading display
     let loadingDiv = document.createElement("div");

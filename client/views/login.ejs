@@ -1,3 +1,10 @@
+<!--
+Description: HTML for login page. Displays login options such as through Marist CAS, Facebook, Twitter,
+             and simple user/password login. Also allows users to register an account associated with
+             the aforementioned methods.
+Contributor(s): Kenny Mejia
+-->
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -14,9 +21,14 @@
             <h2 class="ff">FRACTAL FACTORY</h2>
             <h2 class="login">WELCOME</h2>
             <div class="centerDiv">
-                <div id="messages">
+                <!--The following messages div will only display text if messages are available-->
+                <div id="messages" <%if (loginMessage.message) {%> style="color:<%=loginMessage.color%>" <% }%> >
                     <% if (messages.error) { %>
                         <%= messages.error%>
+                    <% }%>
+
+                    <% if (loginMessage.message) { %>
+                        <%= loginMessage.message%>
                     <% }%>
                 </div>
 

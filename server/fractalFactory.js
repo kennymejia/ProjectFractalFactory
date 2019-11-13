@@ -1,3 +1,9 @@
+/*
+Description: Contains the logic for page and data routing for the nodejs express server.
+             This is the main file of the application.
+Contributor(s): Eric Stenton, Kenny Mejia
+ */
+
 const dotenv = require('dotenv');
 dotenv.config();
 const logController = require('./controllers/logController.js');
@@ -13,17 +19,13 @@ const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const initializePassport = require('./passport-config');
 const formidable = require('formidable');
+const fs = require('fs');
 const fsp = require('fs').promises;
 const {promisify} = require('util');
 const getSize = require('get-folder-size');
 const getSizeAsync = promisify(getSize);
 const jimp = require("jimp");
 
-const coinbase = require('coinbase-commerce-node');
-const Client = coinbase.Client;
-const Event = coinbase.resources.Event;
-
-Client.init(process.env.COINBASEKEY);
 
 // Initialize passport with some database functions for authentication
 initializePassport.initialize(
@@ -51,7 +53,7 @@ app.set('view-engine', 'ejs');
 
 ////////////////////// Page routing //////////////////////
 app.get('/', (req, res) => {
-    res.render('login.ejs');
+    res.render('login.ejs', { loginMessage: {message: '', color: ''} });
 });
 
 app.get('/profile', checkAuthenticated, async (req,res) => {
@@ -165,17 +167,24 @@ app.route('/auth/cas').get(
 });
 
 // Register new user with provided details
-// TODO Prevent the same user account --- username specifically
 app.post('/register', checkNotAuthenticated, async (req, res) => {
+
     try {
-        let hashedPassword = await bcrypt.hash(req.body.password, 13);
+        // Check if user exists
+        let user = await provider.getUserByAccount(req.body.username, 'default');
 
-        // Create user of account type 'default'
-        await provider.addUser(req.body.username, hashedPassword, 'default',
-                               req.body.firstname, req.body.lastname || null, req.body.email);
+        if (!user) {
+            let hashedPassword = await bcrypt.hash(req.body.password, 13);
 
-        // Redirect to login page so user can enter their details
-        res.redirect('/');
+            // Create user of account type 'default'
+            await provider.addUser(req.body.username, hashedPassword, 'default',
+                                   req.body.firstname, req.body.lastname || null, req.body.email);
+
+            res.render('login.ejs', { loginMessage: {message: 'Account created', color: 'green'} });
+        } else {
+            res.render('login.ejs', { loginMessage: {message: 'Username already exists', color: 'red'} });
+        }
+
     } catch(e) {
         console.log(e);
         logController.logger.error(e);
@@ -216,10 +225,22 @@ app.post('/upload', checkAuthenticated, async (req, res) => {
 
         form.parse(req);
         form.on('fileBegin', (name, file) => {
-            file.path = userSourceFileLocation;
+            //Reject files not of text type
+            if ( file.type.split('/')[0] == 'text' ) {
+                file.path = userSourceFileLocation;
+            }
         });
 
         form.on('file', async (name, file) => {
+
+            // Redirect if file doesn't exist
+            if ( !fs.existsSync(userSourceFileLocation) ) {
+                return res.redirect('/upload');
+            }
+
+            // Change file permissions -- non-executable, read and write
+            fs.chmodSync(userSourceFileLocation, 0o666);
+
             // Update entry in database with file location
             await provider.updateUserSourceFileLocation(userSourceFileId, userSourceFileLocation);
 
@@ -231,9 +252,9 @@ app.post('/upload', checkAuthenticated, async (req, res) => {
             let fractalDimension = await nn.calculateFractalDimension(userBlocksFileLocation, 'bam');
             await provider.updateUserSourceFractalDimension(userSourceFileId, fractalDimension);
 
-            // TODO Security with file permissions
             res.redirect(`/results/${userSourceFileId}`);
         });
+
     } catch(e) {
         console.log(e);
         logController.logger.error(e);
@@ -245,6 +266,7 @@ app.post('/upload', checkAuthenticated, async (req, res) => {
 
 // Upload source code from text
 app.post('/uploadText', checkAuthenticated, async (req, res) => {
+
     try {
         let user = await req.user;
 
@@ -268,6 +290,7 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
 
         // TODO Security with file permissions
         res.redirect(`/results/${userSourceFileId}`);
+
     } catch(e) {
         logController.logger.error(e);
 
@@ -278,6 +301,7 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
 
 // Upload paintings from admin profile
 app.post('/profile', checkAuthenticated, checkAdmin, async (req, res) => {
+
     try {
         new formidable.IncomingForm().parse(req, async(err, fields, files) => {
             if (err) {
@@ -308,8 +332,7 @@ app.post('/profile', checkAuthenticated, checkAdmin, async (req, res) => {
     }
 });
 
-// Validate coinbase purchase and remove watermark
-// See here for webhook implementation: https://commerce.coinbase.com/docs/api/#charges
+// Remove watermark from specified user painting
 app.post('/watermark', async (req, res) => {
     await provider.updateWatermark(req.body.paintingId);
 });
@@ -323,6 +346,7 @@ app.delete('/logout', checkAuthenticated, (req, res) => {
 
 // Create user painting
 app.get('/generate-user-painting/:userSourceFileId/:paintingId', checkAuthenticated, async (req, res) => {
+
     try {
         let user = await req.user;
 
@@ -333,6 +357,7 @@ app.get('/generate-user-painting/:userSourceFileId/:paintingId', checkAuthentica
         let userPaintingId = await nn.createPainting(userId, userSourceFileId, paintingId);
 
         res.redirect(`/purchase/${userPaintingId}`);
+
     } catch(e) {
         console.log(e);
         logController.logger.error(e);
@@ -341,6 +366,7 @@ app.get('/generate-user-painting/:userSourceFileId/:paintingId', checkAuthentica
 
 // Get a user painting
 app.get('/user-painting/:id', checkAuthenticated, async (req, res) => {
+
     try {
         let user = await req.user; // Make sure it is a painting associated with requesting user
         let userPaintingId = req.params.id;
@@ -368,8 +394,8 @@ app.get('/user-painting/:id', checkAuthenticated, async (req, res) => {
             } else {
                 res.sendFile(userPaintingLocation);
             }
-
         }
+
     } catch(e) {
         console.log(e);
         logController.logger.error(e);
@@ -378,6 +404,7 @@ app.get('/user-painting/:id', checkAuthenticated, async (req, res) => {
 
 // Get a painting
 app.get('/painting/:id', checkAuthenticated, async (req, res) => {
+
     try {
         let paintingId = req.params.id;
 
@@ -386,10 +413,12 @@ app.get('/painting/:id', checkAuthenticated, async (req, res) => {
         if (paintingLocation) {
             res.sendFile(paintingLocation);
         }
+
     } catch(e) {
         console.log(e);
         logController.logger.error(e);
     }
+
 });
 
 // Get heatmap datasets

@@ -1,3 +1,9 @@
+<!--
+Description: HTML for upload page. Displays two forms for the user to submit their source code
+             either through a text field or file upload.
+Contributor(s): Kenny Mejia
+-->
+
 <!DOCTYPE html>
 <html>
 
@@ -24,7 +30,7 @@
             <h2 class="ff">Fractal Factory Upload</h2>
 
             <form enctype="multipart/form-data" method="post" id="fileForm">
-                <input name="upload" class="custom-file-input" type="file" id="fileUpload" placeholder="Choose a file" required/>
+                <input name="upload" class="custom-file-input" type="file" accept="text/*" id="fileUpload" placeholder="Choose a file" required/>
                 <label for="fileUpload" id="fileUploadLabel">Choose a file</label>
                 <input class="form-submit-button" type="submit" name="submit">
             </form>
