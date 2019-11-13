@@ -1,3 +1,9 @@
+/*
+Description: Contains logic for the Passport library's authentication of users and the initialization
+             of sessions.
+Contributor(s): Kenny Mejia, Eric Stenton
+ */
+
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -16,7 +22,7 @@ module.exports.initialize = (passport, getUserByAccount, getUserById) => {
         const user = await getUserByAccount(username, 'default');
 
         if(user == null) {
-            return done( null, false, { message: 'No user with that username'} );
+            return done( null, false, { message: 'Username or password incorrect'} );
         }
 
         try {
@@ -25,7 +31,7 @@ module.exports.initialize = (passport, getUserByAccount, getUserById) => {
                 provider.updateLoginDate(user.user_id);
                 return done(null, user);
             }else {
-                return done(null, false, { message: 'Password incorrect'} );
+                return done(null, false, { message: 'Username or password incorrect'} );
             }
 
         } catch(e) {

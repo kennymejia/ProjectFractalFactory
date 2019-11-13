@@ -1,3 +1,12 @@
+<!--
+Description: HTML for profile page. Displays a user's generated paintings as well as provides
+             an interface for administrators. Admins get a heat map showing the amount of
+             source file submissions organized by time and day. They also have an interface
+             to view all users from the database and toggle their active and admin statuses.
+             Finally, there is a form for admins to add a new painting to the database.
+Contributor(s): Kenny Mejia, Eric Stenton
+-->
+
 <!DOCTYPE html>
 <html>
 
@@ -15,7 +24,6 @@
 
     <body>
 
-        
         <div class="container">
                 <header>
                   <i class="fa fa-bars" aria-hidden="true"></i>
@@ -29,6 +37,10 @@
                       <button class="btn" type="submit">About</button>
                   </form>
 
+                  <!--
+                       The existence of the statistics variable denotes a user is an administrator
+                       and should see all admin tools
+                   -->
                   <% if(statistics) {%>
                       <div id="statistics">
                           <h1>Admin Controls</h1>
@@ -52,6 +64,7 @@
                               </thead>
 
                               <tbody>
+                                  <!--The following code creates the users table from an object containing all user data-->
                                   <% for(let user of users) { %>
                                       <tr>
                                         <td class="userId"><%=user.user_id%></td>
@@ -82,6 +95,7 @@
                           </table>
 
                           <h2>Application Statistics</h2>
+                          <!--The following code displays all statistics passed from the backend by key and value pair-->
                           <% for (let [key, value] of Object.entries(statistics) ) { %>
                              <div class="statistic"><%=key%>: <%=value%></div>
                           <%}%>
@@ -112,6 +126,7 @@
 
 
                     <div class="gallery">
+                        <!--The following code creates image objects for each of the user's generated paintings-->
                         <% for (let i=0; i<userPaintings.length; i++) { %>
                             <div class="gallery">
                                 <a href="/purchase/<%=userPaintings[i].user_painting_id%>">
@@ -120,6 +135,7 @@
                             </div>
                         <%}%>
 
+                        <!--If the user doesn't have any paintings, notify them-->
                         <% if(userPaintings.length == 0) {%>
                             <p class="info">You have no paintings!</p>
                         <%}%>

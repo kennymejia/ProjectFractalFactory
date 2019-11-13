@@ -1,3 +1,10 @@
+/*
+Description: Javascript for upload page. Contains logic for displaying loading gif when
+             waiting for results of fractal dimension calculation as well as updating
+             label for the file upload button.
+Contributor(s): Eric Stenton
+*/
+
 var displayLoading = msg => {
 	// Create loading display
 	let loadingDiv = document.createElement("div");

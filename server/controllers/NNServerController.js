@@ -1,3 +1,10 @@
+/*
+Description: Controls the interaction between the main application and Flask API. Note that
+             these functions are meant to abstract the processes of calculating the fractal
+             dimension, creating the user painting, and creating the BAM files.
+Contributor(s): Eric Stenton
+ */
+
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -9,12 +16,6 @@ const provider = require('../providers/postgresProvider');
 const logController = require('../controllers/logController.js');
 const path = require('path')
 
-// Note that these functions are meant to abstract the processes of calculating the fractal dimension, creating
-// the user painting, and creating the blocks files. It is done locally, but may be changed to be done on another
-// machine.
-//
-// Also, it may be necessary to change the python implementation from using promisify in order to get more than
-// a single print out -- test as needed
 module.exports = {
 
     // Returns the fractal dimension of the given file

@@ -1,3 +1,10 @@
+<!--
+Description: HTML for purchase page. Displays a closeup of generated painting and gives the user
+             the option to remove watermark by paying through bitcoin as well as purchase a print
+             of the painting through CanvasPop.
+Contributor(s): Candice Rivera
+-->
+
 <!DOCTYPE html>
 <html>
 
@@ -24,9 +31,11 @@
         <h2 class="ff">Here is your painting!</h2>
 
         <div id="paintingDiv">
+            <!--Link to requested image is passed from backend-->
             <img id="painting" src="<%=paintingLink%>"/>
         </div>
 
+        <!--CanvasPop key is passed from backend-->
         <div id="cp-store-root" data-cp-settings='{ "access_key": "<%=canvasPopKey%>", "modal": true }'></div>
         <script>
             (function ( d, s, id ) {
@@ -42,6 +51,7 @@
 
         <div id="purchaseDiv">
             <button class="btn" id="watermarkBtn">Remove Watermark</button>
+            <!--Pass painting link to CanvasPop-->
             <button class="btn" data-cp-url="<%=paintingFullLink%>">
                 Buy Canvas Print
             </button>
@@ -54,9 +64,7 @@
                     <img src="/images/cart.png" alt="Cart" id="cartSymbol">
                 </div>
                 <div class="container">
-
-
-                     <a class="buy-with-crypto" data-custom="<%=paintingFullLink%>" href="https://commerce.coinbase.com/checkout/edfc4b6e-886a-4199-862f-5a21e9af3d51">
+                     <a class="buy-with-crypto" href="https://commerce.coinbase.com/checkout/edfc4b6e-886a-4199-862f-5a21e9af3d51">
                         <button id="bitcoinBtn" type="submit">
                             <img src="/images/bitcoin.png" alt="Bitcoin" id="bitcoinSymbol">Pay with Crypto
                         </button>

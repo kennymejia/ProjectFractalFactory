@@ -1,3 +1,9 @@
+<!--
+Description: HTML for results page. Displays top 3 paintings with closest fractal dimensions to
+             the user's submitted source code. Shows a loading gif when waiting for fetch response.
+Contributor(s): Candice Rivera
+-->
+
 <!DOCTYPE html>
 <html>
 
@@ -23,6 +29,7 @@
             <h2 class="ff">Here are your Matches!</h2>
 
             <div id="choices">
+                <!--Create image objects with their information below them-->
                 <% for (let i=0; i<paintings.length; i++) { %>
                 <div class="choice">
                     <img class="painting" src="/painting/<%=paintings[i].painting_id%>"/>

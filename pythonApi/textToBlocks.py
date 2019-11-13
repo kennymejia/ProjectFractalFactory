@@ -1,3 +1,6 @@
+#Description: Contains logic for converting source code into BAM images.
+#Contributor(s): Eric Stenton
+
 import os
 import re
 from PIL import Image, ImageDraw, ImageFont
