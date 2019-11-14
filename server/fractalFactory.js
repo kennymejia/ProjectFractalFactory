@@ -26,6 +26,13 @@ const getSize = require('get-folder-size');
 const getSizeAsync = promisify(getSize);
 const jimp = require("jimp");
 
+const http = require('http');
+const https = require('https');
+const options = {
+    key: fs.readFileSync(process.env.PRIVKEY),
+    cert: fs.readFileSync(process.env.CERT)
+};
+
 
 // Initialize passport with some database functions for authentication
 initializePassport.initialize(
@@ -35,8 +42,9 @@ initializePassport.initialize(
 );
 
 ////////////////////// Express and Passport Settings //////////////////////
+app.all('*', ensureSecure); // at top of routing calls
 app.use(bodyParser.json({ type: 'application/json'}));
-app.use(express.static(`client/public`));
+app.use(express.static(`client/public`, {dotfiles: 'allow' } ));
 app.use(express.urlencoded({ extended: false })); // Access form posts in request method
 app.use(flash());
 app.use(session({
@@ -462,8 +470,21 @@ async function checkAdmin (req, res, next) {
     res.send([]);
 }
 
+function ensureSecure(req, res, next){
+    if(req.secure){
+        return next();
+    }
+
+    res.redirect('https://' + req.hostname + req.url);
+}
+
 ////////////////////// Port Listening //////////////////////
-app.listen(process.env.PORT, () => {
-	console.log(`fractalFactory is running on port ${process.env.PORT}`);
-	logController.logger.info(`fractalFactory is running on port ${process.env.PORT}`);
+http.createServer(app).listen(process.env.PORT, () => {
+    console.log(`Fractal Factory http is running on port ${process.env.PORT}`);
+    logController.logger.info(`fractalFactory http is running on port ${process.env.PORT}`);
+});
+
+https.createServer(options, app).listen(process.env.SSLPORT, () => {
+	console.log(`Fractal Factory https is running on port ${process.env.SSLPORT}`);
+	logController.logger.info(`fractalFactory httpS is running on port ${process.env.SSLPORT}`);
 });
