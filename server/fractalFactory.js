@@ -285,6 +285,9 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
         let userSourceFileLocation = `${process.env.USERSOURCEFILEDIRECTORY}${userSourceFileId}.txt`;
         await fsp.writeFile(userSourceFileLocation, req.body.text);
 
+        // Change file permissions -- non-executable, read and write
+        fs.chmodSync(userSourceFileLocation, 0o666);
+
         // Update entry in database with file location
         await provider.updateUserSourceFileLocation(userSourceFileId, userSourceFileLocation);
 
@@ -296,7 +299,6 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
         let fractalDimension = await nn.calculateFractalDimension(userBlocksFileLocation, 'bam');
         await provider.updateUserSourceFractalDimension(userSourceFileId, fractalDimension);
 
-        // TODO Security with file permissions
         res.redirect(`/results/${userSourceFileId}`);
 
     } catch(e) {
@@ -388,7 +390,7 @@ app.get('/user-painting/:id', checkAuthenticated, async (req, res) => {
                 let watermark = await jimp.read(process.env.WATERMARKFILE);
 
                 watermark.resize(50, 50);
-                painting.resize(200, 200); // TODO Remove this when actual paintings added
+                painting.resize(200, 200);
 
                 let image = painting.clone().composite(watermark, 140, 140, {
                     mode: jimp.BLEND_SOURCE_OVER,
