@@ -86,4 +86,4 @@ if __name__ == '__main__':
     print(("* Loading Keras model and starting Flask server..."
             "Please wait until server has fully started"))
     encoder.load_models()
-    app.run()
+    app.run(port=os.getenv("PORT"))
