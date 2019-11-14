@@ -1,3 +1,10 @@
+/*
+Description: Javascript for profile page. Contains logic for building d3.js heatmap,
+             controlling administrator table of users, and the addition of paintings
+             to the database.
+Contributor(s): Eric Stenton
+*/
+
 // Heatmap logic
 var buildHeatmap = async (datasets) => {
     let aCnt = 0,

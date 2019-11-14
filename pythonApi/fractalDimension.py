@@ -1,3 +1,6 @@
+#Description: Contains logic for calculating the fractal dimension of an image.
+#Contributor(s): Eric Stenton
+
 import sys
 import numpy as np
 import pylab as pl

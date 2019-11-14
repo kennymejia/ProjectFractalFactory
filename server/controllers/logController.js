@@ -1,3 +1,9 @@
+/*
+Description: Controls and offers an inferface for writing to a log file. This is mostly
+             overshadowed by PM2's logging but remains as an additional tool.
+Contributor(s): Eric Stenton
+ */
+
 const dotenv = require('dotenv');
 dotenv.config();
 

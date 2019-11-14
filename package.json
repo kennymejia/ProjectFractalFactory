@@ -6,10 +6,7 @@
   "scripts": {
     "start": "pm2 start server/fractalFactory.js",
     "devStart": "nodemon server/fractalFactory.js",
-    "addPaintings": "node --http-parser=legacy ./server/providers/metMuseumProvider.js",
-    "deploy": "npm install && apt-get update && npm run installPython",
-    "installPython": "apt-get install python3.7 && npm run pythonPkgs",
-    "pythonPkgs": "pip install matplotlib Pillow numpy imageio"
+    "addPaintings": "node --http-parser=legacy ./server/providers/metMuseumProvider.js"
   },
   "repository": {
     "type": "git",

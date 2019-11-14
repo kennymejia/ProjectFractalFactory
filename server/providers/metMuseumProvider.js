@@ -1,3 +1,12 @@
+/*
+Description: Contains logic for connecting to the Metropolitan Museum of Art's API to get
+             painting images and information to fill the database. This script takes an
+             integer input of how many paintings to request. Note the API uses headers
+             that don't function well with Node's new http parser, so use --http-parser=legacy
+             when calling these functions. The legacy http-parser has been removed in Nodejs 13.
+Contributor(s): Eric Stenton
+ */
+
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -8,9 +17,6 @@ const provider = require('./postgresProvider');
 const nn = require('../controllers/NNServerController');
 
 let baseUrl = "https://collectionapi.metmuseum.org/public/collection/v1";
-
-// The API uses headers that don't function well with Node's new http parser, so use --http-parser=legacy
-// when calling these functions
 
 var fetchPaintings = async amount => {
   let objectsResult;

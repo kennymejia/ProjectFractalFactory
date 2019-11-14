@@ -1,3 +1,9 @@
+/*
+Description: Contains logic for connecting to the Postgres database. A pool of clients is created
+             to assist with connections.
+Contributor(s): Eric Stenton
+ */
+
 const dotenv = require('dotenv');
 dotenv.config();
 

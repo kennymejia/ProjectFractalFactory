@@ -1,3 +1,7 @@
+#Description: Contains Flask API routes for fractal dimension calculation, BAM
+#             file generation, and painting generation.
+#Contributor(s): Eric Stenton
+
 from dotenv import load_dotenv
 load_dotenv()
 import os
@@ -82,4 +86,4 @@ if __name__ == '__main__':
     print(("* Loading Keras model and starting Flask server..."
             "Please wait until server has fully started"))
     encoder.load_models()
-    app.run(debug=True)
+    app.run(port=os.getenv("PORT"))
