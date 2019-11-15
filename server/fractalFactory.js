@@ -14,7 +14,7 @@ const bcrypt = require('bcryptjs');
 const provider = require('./providers/postgresProvider');
 const passport = require('passport');
 const flash = require('express-flash');
-const session = require('express-session');
+const cookieSession = require('cookie-session');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const initializePassport = require('./passport-config');
@@ -47,10 +47,12 @@ app.use(bodyParser.json({ type: 'application/json'}));
 app.use(express.static(`client/public`, {dotfiles: 'allow' } ));
 app.use(express.urlencoded({ extended: false })); // Access form posts in request method
 app.use(flash());
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false
+app.use(cookieSession({
+    name: 'session',
+    keys: [process.env.COOKIEKEY1, process.env.COOKIEKEY2],
+
+    // Cookie Options
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 app.use(passport.initialize());
 app.use(passport.session());
