@@ -59,6 +59,6 @@
     "nodemon": "^1.19.4"
   },
   "resolutions": {
-    "lodash": "^4.17.15"
+    "cheerio": "^1.0.0-rc.3"
   }
 }
