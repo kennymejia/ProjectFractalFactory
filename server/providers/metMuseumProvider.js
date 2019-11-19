@@ -60,7 +60,7 @@ var fillDatabase = async paintings => {
     for (let painting of paintings) {
         let paintingId = await provider.addPainting(painting.name,
                                             painting.painter || "Unidentified Artist",
-                                                    painting.yearCreated);
+                                                    painting.yearCreated > 0 ? painting.yearCreated : "Unknown");
 
         // Add file path
         let filePath = `${process.env.PAINTINGDIRECTORY}${paintingId}.jpg`;
