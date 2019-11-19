@@ -15,14 +15,14 @@ You only need about 100 lines of code to try it out, we hope you enjoy our appli
 * Node.js version 12.11.1
 * NPM version 6.11.3
 * PM2 latest
-* Python 3 (Required packages listed during installation)
+* Python 2.7 (Required packages listed during installation)
 * Git
 
 
 ### Installing
 1. Clone master branch to machine
 2. Place pythonApi file onto machine that will run the neural network API
-3. Install the following python packages on API machine: numpy, scikit-image, keras, gdown, pillow, ISR, imageio, matplotlib, flask, python-dotenv
+3. Install the following python packages on API machine: numpy, scikit-image, keras, gdown, pillow, imageio, matplotlib, flask, python-dotenv, waitress
 4. Run 'npm install' from command line in main Fractal-Factory application root directory
 
 ### Database (Postgres)
@@ -33,7 +33,7 @@ You only need about 100 lines of code to try it out, we hope you enjoy our appli
 ### Running
 1. Create .env file with provided example '.env.example' for both main application and flask API
 2. Run 'pm2 start ./server/fractalFactory.js' from command line in application root directory
-3. Run 'python3 app.py' to start flask API on python machine in application directory
+3. Run 'python app.py' to start flask API on python machine in application directory
 4. Fill database with paintings from Metropolitan Museum of Art API by running 'npm run addPaintings (number)' where number is the number of desired paintings to be retrieved
 5. Supply the application with an SSL certificate and private key. Instructions can be found here: https://itnext.io/node-express-letsencrypt-generate-a-free-ssl-certificate-and-run-an-https-server-in-5-minutes-a730fbe528ca
 
