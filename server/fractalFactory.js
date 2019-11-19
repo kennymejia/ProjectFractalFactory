@@ -385,15 +385,17 @@ app.get('/user-painting/:id', async (req, res) => {
         let userPaintingLocation = await provider.getUserPaintingLocation(userPaintingId);
 
         if (userPaintingLocation) {
+
+            let painting = await jimp.read(userPaintingLocation);
+            painting.resize(1000, 1000);
+
             // Add watermark if user did not pay to remove it
             if ( await provider.getWatermark(userPaintingId) ) {
-                let painting = await jimp.read(userPaintingLocation);
                 let watermark = await jimp.read(process.env.WATERMARKFILE);
 
-                watermark.resize(50, 50);
-                painting.resize(200, 200);
+                watermark.resize(250, 250);
 
-                let image = painting.clone().composite(watermark, 140, 140, {
+                let image = painting.clone().composite(watermark, 740, 740, {
                     mode: jimp.BLEND_SOURCE_OVER,
                     opacitySource: 0.5,
                     opacityDest: 0.9
@@ -403,7 +405,11 @@ app.get('/user-painting/:id', async (req, res) => {
                 res.write(buffer,'binary');
                 res.end(null, 'binary');
             } else {
-                res.sendFile(userPaintingLocation);
+                let image = painting.clone();
+                let buffer = await image.getBufferAsync(jimp.MIME_PNG);
+
+                res.write(buffer,'binary');
+                res.end(null, 'binary');
             }
         }
 
