@@ -106,12 +106,12 @@ module.exports = {
         }
     },
 
-    getUserPaintingLocation: async (userId, userPaintingId) => {
+    getUserPaintingLocation: async userPaintingId => {
 
         try {
             let result = await module.exports.query(`SELECT file_location FROM user_paintings 
-                                               WHERE user_id = $1 AND user_painting_id = $2`,
-                                    [userId, userPaintingId]);
+                                               WHERE user_painting_id = $1`,
+                                    [userPaintingId]);
 
             if (result.rows){
                 return result.rows[0].file_location;

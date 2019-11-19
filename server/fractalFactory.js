@@ -136,8 +136,8 @@ app.get('/upload', checkAuthenticated, (req,res) => {
 app.use('/purchase', express.static('client/public')); // purchase/:id is a conceptual link, not a physical one
 app.get('/purchase/:id', checkAuthenticated, async (req,res) => {
     let userPaintingId = req.params.id;
-    res.render('purchase.ejs', { paintingLink: `/user-painting/${userPaintingId}.png`,
-                                 paintingFullLink: `${process.env.HOST}/user-painting/${userPaintingId}.png`, // For canvas pop
+    res.render('purchase.ejs', { paintingLink: `/user-painting/${userPaintingId}`,
+                                 paintingFullLink: `${process.env.HOST}/user-painting/${userPaintingId}`, // For canvas pop
                                  canvasPopKey: process.env.CANVASPOPKEY} );
 });
 
@@ -377,16 +377,12 @@ app.get('/generate-user-painting/:userSourceFileId/:paintingId', checkAuthentica
 });
 
 // Get a user painting
-app.get('/user-painting/:id', checkAuthenticated, async (req, res) => {
+app.get('/user-painting/:id', async (req, res) => {
 
     try {
-        let user = await req.user; // Make sure it is a painting associated with requesting user
         let userPaintingId = req.params.id;
 
-        // Remove .png from id
-        userPaintingId = userPaintingId.replace(/\..+$/, '');
-
-        let userPaintingLocation = await provider.getUserPaintingLocation(user.user_id, userPaintingId);
+        let userPaintingLocation = await provider.getUserPaintingLocation(userPaintingId);
 
         if (userPaintingLocation) {
             // Add watermark if user did not pay to remove it
