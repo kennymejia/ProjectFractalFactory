@@ -62,7 +62,7 @@ app.set('views', 'client/views');
 app.set('view-engine', 'ejs');
 
 ////////////////////// Page routing //////////////////////
-app.get('/', (req, res) => {
+app.get('/', checkNotAuthenticated, (req, res) => {
     res.render('login.ejs', { loginMessage: {message: '', color: ''} });
 });
 
