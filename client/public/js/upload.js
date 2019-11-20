@@ -59,4 +59,5 @@ window.addEventListener('load', (event) => {
 	uploadFileBtn.addEventListener('click', (e) => {
 		displayLoading('Calculating Fractal Dimension');
 	});
+
 });

@@ -30,13 +30,14 @@ Contributor(s): Kenny Mejia
             <h2 class="ff">Fractal Factory Upload</h2>
 
             <form enctype="multipart/form-data" method="post" id="fileForm">
-                <input name="upload" class="custom-file-input" type="file" accept="text/*" id="fileUpload" placeholder="Choose a file" required/>
+                <input name="upload" class="custom-file-input" type="file" accept="text/*" id="fileUpload"
+                       placeholder="Choose a file" required/>
                 <label for="fileUpload" id="fileUploadLabel">Choose a file</label>
                 <input class="form-submit-button" type="submit" name="submit">
             </form>
 
             <form action="/uploadText" method="post" id="textForm">
-                <textarea id="inputTextToSave" class="textBoxCode" name="text"
+                <textarea id="inputTextToSave" class="textBoxCode" name="text" maxlength="10000"
                     placeholder="Paste Code Here..." cols="92" rows="20" required></textarea>
                 <button class="textAreaSubmit" type="submit">Submit Text Area</button>
             </form>
