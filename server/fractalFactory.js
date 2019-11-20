@@ -62,7 +62,7 @@ app.set('views', 'client/views');
 app.set('view-engine', 'ejs');
 
 ////////////////////// Page routing //////////////////////
-app.get('/', (req, res) => {
+app.get('/', checkNotAuthenticated, (req, res) => {
     res.render('login.ejs', { loginMessage: {message: '', color: ''} });
 });
 
@@ -265,12 +265,20 @@ app.post('/upload', checkAuthenticated, async (req, res) => {
             res.redirect(`/results/${userSourceFileId}`);
         });
 
+        form.on('error', err => {
+            console.log(err);
+            logController.logger.error(err);
+
+            // Redirect back to page if problem
+            res.redirect('/upload')
+        });
+
     } catch(e) {
         console.log(e);
         logController.logger.error(e);
 
-        // Redirect back to register page if problem
-        res.redirect('/profile');
+        // Redirect back to page if problem
+        res.redirect('/upload');
     }
 });
 
@@ -306,8 +314,8 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
     } catch(e) {
         logController.logger.error(e);
 
-        // Redirect back to register page if problem
-        res.redirect('/profile');
+        // Redirect back to page if problem
+        res.redirect('/upload');
     }
 });
 
