@@ -75,7 +75,7 @@ var fillDatabase = async paintings => {
 
                     await provider.updatePaintingFileLocation(paintingId, filePath);
 
-                    // Add fractal dimension -- if null, it means the painting was not RGB format
+                    // Add fractal dimension -- if null, it means the painting was not RGB format or error in transfer to API
                     let fractalDimension = await nn.calculateFractalDimension(filePath, 'painting');
 
                     await provider.updatePaintingFractalDimension(paintingId, fractalDimension);

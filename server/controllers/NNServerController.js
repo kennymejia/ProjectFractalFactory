@@ -30,7 +30,8 @@ module.exports = {
 
             let request = {
                 method: 'POST',
-                body: formData
+                body: formData,
+                timeout: 0
             };
 
             let response = await fetch(`${process.env.PYTHONAPI}/fractal-dimension`, request);
@@ -61,7 +62,8 @@ module.exports = {
 
             let request = {
                 method: 'POST',
-                body: formData
+                body: formData,
+                timeout: 0
             };
 
             let response = await fetch(`${process.env.PYTHONAPI}/create-painting`, request);
@@ -95,7 +97,8 @@ module.exports = {
 
             let request = {
                 method: 'POST',
-                body: formData
+                body: formData,
+                timeout: 0
             };
 
             let response = await fetch(`${process.env.PYTHONAPI}/generate-bam`, request);
