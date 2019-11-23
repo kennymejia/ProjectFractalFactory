@@ -199,8 +199,8 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         console.log(e);
         logController.logger.error(e);
 
-        // Redirect back to register page if problem
-        res.redirect('/register');
+        // Redirect back to login page if problem
+        res.redirect('/login');
     }
 });
 
