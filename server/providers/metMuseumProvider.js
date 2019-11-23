@@ -82,7 +82,6 @@ var fillDatabase = async paintings => {
                 });
             }
         });
-
     }
 };
 
