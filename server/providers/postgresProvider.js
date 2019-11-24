@@ -156,6 +156,21 @@ module.exports = {
         }
     },
 
+    // Get highest and lowest fractal dimension of available paintings
+    getPaintingFractalDimensionRange: async () => {
+
+        try {
+            let result = await module.exports.query(`SELECT MIN(fractal_dimension) as minimum,
+                                                    MAX(fractal_dimension) as maximum FROM paintings;`);
+
+            return result.rows[0];
+
+        } catch(e) {
+            console.log(e);
+            logController.logger.error(e);
+        }
+    },
+
     getRandomPaintingId: async () => {
 
         try {

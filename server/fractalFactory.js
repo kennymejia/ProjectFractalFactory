@@ -111,6 +111,40 @@ app.get('/results/:id', checkAuthenticated, async (req,res) => {
     try {
         let fractalDimension = await provider.getUserSourceFileFractalDimension(userSourceFileId);
 
+        /* In the event that the source file fractal dimension is either some degree higher or lower than the highest
+           or lowest fractal dimension of the available paintings respectively, the fractal dimension of the source file
+           will be substituted or modified in such a way to place it in the range of available painting fractal
+           dimensions. The purpose of this is to avoid the same paintings with the lowest or highest fractal dimensions
+           always being given as choices when most source file fractal dimensions do not fall within the range of the
+           available painting fractal dimensions.
+        */
+        let range = await provider.getPaintingFractalDimensionRange();
+        let rangeDifference = range.maximum - range.minimum;
+        let degree = .05;
+
+        /* If the fractal dimension is less than the minimum painting fractal dimension by more than the degree, then
+           normalize the difference between the fractal dimension and the minimum painting fractal dimension and
+           multiply that by the difference of the maximum and minimum painting fractal dimensions
+        */
+        if (range.minimum - fractalDimension > degree) {
+            let fractalDimensionModified = range.minimum +
+                (( 1 - (1 - 1 / (1 + (range.minimum - fractalDimension))) ) * rangeDifference);
+
+            fractalDimension = fractalDimensionModified;
+        }
+
+        /* If the fractal dimension is more than the maximum painting fractal dimension by more than the degree, then
+           normalize the difference between the fractal dimension and the maximum painting fractal dimension and
+           multiply that by the difference of the maximum and minimum painting fractal dimensions
+        */
+        if (fractalDimension - range.maximum > degree) {
+            let fractalDimensionModified = range.maximum -
+                (( 1 - (1 - 1 / (1 + (fractalDimension - range.maximum))) ) * rangeDifference);
+
+            fractalDimension = fractalDimensionModified;
+        }
+
+
         paintings = await provider.getPaintingIds(fractalDimension);
 
         // Get metadata for paintings
