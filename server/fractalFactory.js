@@ -373,7 +373,7 @@ app.post('/profile', checkAuthenticated, checkAdmin, async (req, res) => {
                 await fsp.rename(file[1].path, paintingFileLocation);
                 await provider.updatePaintingFileLocation(paintingId, paintingFileLocation);
 
-                // Add fractal dimension -- if null, it means the painting was not RGB format
+                // Add fractal dimension
                 let fractalDimension = await nn.calculateFractalDimension(paintingFileLocation, 'painting');
                 await provider.updatePaintingFractalDimension(paintingId, fractalDimension);
                 res.redirect('/profile'); // Redirect to same page
