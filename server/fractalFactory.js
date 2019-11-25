@@ -127,7 +127,7 @@ app.get('/results/:id', checkAuthenticated, async (req,res) => {
            multiply that by the difference of the maximum and minimum painting fractal dimensions
         */
         if (range.minimum - fractalDimension > degree) {
-            let fractalDimensionModified = range.minimum +
+            let fractalDimensionModified = parseFloat(range.minimum) +
                 (( 1 - (1 - 1 / (1 + (range.minimum - fractalDimension))) ) * rangeDifference);
 
             fractalDimension = fractalDimensionModified;
