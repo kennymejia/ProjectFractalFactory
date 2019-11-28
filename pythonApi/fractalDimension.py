@@ -75,7 +75,7 @@ def fractal_dimension_hausdorff(image):
         pixels=pl.array(pixels)
 
         # computing the fractal dimension
-        #considering only scales in a logarithmic list
+        # considering only scales in a logarithmic list
         scales=np.logspace(0.01, 1, num=10, endpoint=False, base=2)
         Ns=[]
         # looping over several scales

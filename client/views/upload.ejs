@@ -29,6 +29,13 @@ Contributor(s): Kenny Mejia
         <div class="centerDiv">
             <h2 class="ff">Fractal Factory Upload</h2>
 
+            <!--The following messages div will only display text if messages are available-->
+            <div id="messages">
+                <% if (errorMessage.message) { %>
+                    <%= errorMessage.message%>
+                <% }%>
+            </div>
+
             <form enctype="multipart/form-data" method="post" id="fileForm">
                 <input name="upload" class="custom-file-input" type="file" accept="text/*" id="fileUpload"
                        placeholder="Choose a file" required/>

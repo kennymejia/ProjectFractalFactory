@@ -164,7 +164,7 @@ app.get('/results/:id', checkAuthenticated, async (req,res) => {
 });
 
 app.get('/upload', checkAuthenticated, (req,res) => {
-    res.render('upload.ejs');
+    res.render('upload.ejs', { errorMessage: {message: ''} });
 });
 
 app.use('/purchase', express.static('client/public')); // purchase/:id is a conceptual link, not a physical one
@@ -279,7 +279,9 @@ app.post('/upload', checkAuthenticated, async (req, res) => {
 
             // Redirect if file doesn't exist
             if ( !fs.existsSync(userSourceFileLocation) ) {
-                return res.redirect('/upload');
+                return res.render('upload.ejs', { errorMessage: {message: `There was a problem processing request. Please
+                                                                           try a smaller snippet of code. If problem
+                                                                           persists, please try again later.`} });
             }
 
             // Change file permissions -- non-executable, read and write
@@ -290,10 +292,22 @@ app.post('/upload', checkAuthenticated, async (req, res) => {
 
             // Create BAM/blocks file
             let userBlocksFileLocation = await nn.createBlocks(user.user_id, userSourceFileId, userSourceFileLocation);
+            if (!userBlocksFileLocation) {
+                return res.render('upload.ejs', { errorMessage: {message: `There was a problem processing request. Please
+                                                                           try a smaller snippet of code. If problem
+                                                                           persists, please try again later.`} });
+            }
+
             await provider.updateUserBlocksFileLocation(userSourceFileId, userBlocksFileLocation);
 
             // Update entry in database with fractal dimension
             let fractalDimension = await nn.calculateFractalDimension(userBlocksFileLocation, 'bam');
+            if (!fractalDimension) {
+                return res.render('upload.ejs', { errorMessage: {message: `There was a problem processing request. Please
+                                                                           try a smaller snippet of code. If problem
+                                                                           persists, please try again later.`} });
+            }
+
             await provider.updateUserSourceFractalDimension(userSourceFileId, fractalDimension);
 
             res.redirect(`/results/${userSourceFileId}`);
@@ -304,7 +318,9 @@ app.post('/upload', checkAuthenticated, async (req, res) => {
             logController.logger.error(err);
 
             // Redirect back to page if problem
-            res.redirect('/upload')
+            return res.render('upload.ejs', { errorMessage: {message: `There was a problem processing request. Please
+                                                                           try a smaller snippet of code. If problem
+                                                                           persists, please try again later.`} });
         });
 
     } catch(e) {
@@ -312,7 +328,9 @@ app.post('/upload', checkAuthenticated, async (req, res) => {
         logController.logger.error(e);
 
         // Redirect back to page if problem
-        res.redirect('/upload');
+        return res.render('upload.ejs', { errorMessage: {message: `There was a problem processing request. Please
+                                                                           try a smaller snippet of code. If problem
+                                                                           persists, please try again later.`} });
     }
 });
 
@@ -337,10 +355,22 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
 
         // Create BAM/blocks file
         let userBlocksFileLocation = await nn.createBlocks(user.user_id, userSourceFileId, userSourceFileLocation);
+        if (!userBlocksFileLocation) {
+            return res.render('upload.ejs', { errorMessage: {message: `There was a problem processing request. Please
+                                                                           try a smaller snippet of code. If problem
+                                                                           persists, please try again later.`} });
+        }
+
         await provider.updateUserBlocksFileLocation(userSourceFileId, userBlocksFileLocation);
 
         // Update entry in database with fractal dimension
         let fractalDimension = await nn.calculateFractalDimension(userBlocksFileLocation, 'bam');
+        if (!fractalDimension) {
+            return res.render('upload.ejs', { errorMessage: {message: `There was a problem processing request. Please
+                                                                           try a smaller snippet of code. If problem
+                                                                           persists, please try again later.`} });
+        }
+
         await provider.updateUserSourceFractalDimension(userSourceFileId, fractalDimension);
 
         res.redirect(`/results/${userSourceFileId}`);
@@ -349,7 +379,9 @@ app.post('/uploadText', checkAuthenticated, async (req, res) => {
         logController.logger.error(e);
 
         // Redirect back to page if problem
-        res.redirect('/upload');
+        return res.render('upload.ejs', { errorMessage: {message: `There was a problem processing request. Please
+                                                                           try a smaller snippet of code. If problem
+                                                                           persists, please try again later.`} });
     }
 });
 
@@ -375,6 +407,10 @@ app.post('/profile', checkAuthenticated, checkAdmin, async (req, res) => {
 
                 // Add fractal dimension
                 let fractalDimension = await nn.calculateFractalDimension(paintingFileLocation, 'painting');
+                if (!fractalDimension) {
+                    return res.redirect('/profile');
+                }
+
                 await provider.updatePaintingFractalDimension(paintingId, fractalDimension);
                 res.redirect('/profile'); // Redirect to same page
             }
@@ -383,6 +419,8 @@ app.post('/profile', checkAuthenticated, checkAdmin, async (req, res) => {
     } catch(e) {
         console.log(e);
         logController.logger.error(e);
+
+        return res.redirect('/profile');
     }
 });
 
@@ -409,12 +447,21 @@ app.get('/generate-user-painting/:userSourceFileId/:paintingId', checkAuthentica
         let paintingId = req.params.paintingId;
 
         let userPaintingId = await nn.createPainting(userId, userSourceFileId, paintingId);
+        if (!userPaintingId) {
+            return res.render('upload.ejs', { errorMessage: {message: `There was a problem processing request. Please
+                                                                           try a smaller snippet of code. If problem
+                                                                           persists, please try again later.`} });
+        }
 
         res.redirect(`/purchase/${userPaintingId}`);
 
     } catch(e) {
         console.log(e);
         logController.logger.error(e);
+
+        return res.render('upload.ejs', { errorMessage: {message: `There was a problem processing request. Please
+                                                                           try a smaller snippet of code. If problem
+                                                                           persists, please try again later.`} });
     }
 });
 

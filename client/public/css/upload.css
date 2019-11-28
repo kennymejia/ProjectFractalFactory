@@ -194,3 +194,10 @@ html {
     color: white;
     text-align: center;
 }
+
+#messages {
+    color: red;
+    margin-bottom: 10px;
+    font-size: 150%;
+    text-align: center;
+}

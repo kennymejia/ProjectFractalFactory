@@ -35,13 +35,19 @@ module.exports = {
             };
 
             let response = await fetch(`${process.env.PYTHONAPI}/fractal-dimension`, request);
-            response = await response.json();
 
-            return response;
+            if (response.ok) {
+                response = await response.json();
+                return response;
+            } else {
+                return null;
+            }
+
 
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
+            return null;
         }
 
     },
@@ -68,19 +74,24 @@ module.exports = {
 
             let response = await fetch(`${process.env.PYTHONAPI}/create-painting`, request);
 
-            let userPaintingLocation = process.env.USERPAINTINGDIRECTORY+userPaintingId+'.png';
+            if (response.ok) {
+                let userPaintingLocation = process.env.USERPAINTINGDIRECTORY+userPaintingId+'.png';
 
-            // Save user painting
-            await response.body.pipe( fs.createWriteStream(userPaintingLocation) );
+                // Save user painting
+                await response.body.pipe( fs.createWriteStream(userPaintingLocation) );
 
-            // Update the user painting file location to reflect newly generated painting
-            await provider.updateUserPaintingFileLocation(userPaintingId, userPaintingLocation);
+                // Update the user painting file location to reflect newly generated painting
+                await provider.updateUserPaintingFileLocation(userPaintingId, userPaintingLocation);
 
-            return userPaintingId;
+                return userPaintingId;
+            } else {
+                return null;
+            } 
 
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
+            return null;
         }
 
     },
@@ -103,16 +114,21 @@ module.exports = {
 
             let response = await fetch(`${process.env.PYTHONAPI}/generate-bam`, request);
 
-            let bamLocation = process.env.BLOCKFILEDIRECTORY+userSourceFileId+'.jpg';
+            if (response.ok) {
+                let bamLocation = process.env.BLOCKFILEDIRECTORY+userSourceFileId+'.jpg';
 
-            // Save BAM image
-            await response.body.pipe(fs.createWriteStream(bamLocation));
+                // Save BAM image
+                await response.body.pipe(fs.createWriteStream(bamLocation));
 
-            return bamLocation;
+                return bamLocation;
+            } else {
+                return null;
+            }
 
         } catch(e) {
             console.log(e);
             logController.logger.error(e);
+            return null;
         }
 
     }
