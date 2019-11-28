@@ -52,12 +52,17 @@ window.addEventListener('load', (event) => {
 	let uploadTextBtn = document.getElementsByClassName('textAreaSubmit')[0];
 	let uploadFileBtn = document.getElementsByClassName('form-submit-button')[0];
 
+	// Messages div
+	let messageDiv = document.getElementById('messages');
+
 	uploadTextBtn.addEventListener('click', (e) => {
 		displayLoading('Calculating Fractal Dimension');
+		messageDiv.style.display = 'none';
 	});
 
 	uploadFileBtn.addEventListener('click', (e) => {
 		displayLoading('Calculating Fractal Dimension');
+		messageDiv.style.display = 'none';
 	});
 
 });
