@@ -31,17 +31,21 @@ module.exports = {
             let request = {
                 method: 'POST',
                 body: formData,
-                timeout: 0
             };
 
-            let response = await fetch(`${process.env.PYTHONAPI}/fractal-dimension`, request);
+            let output;
 
-            if (response.ok) {
+            let response = await fetch(`${process.env.PYTHONAPI}/fractal-dimension`, request).catch(err => {
+                console.log(err);
+                logController.logger.error(err);
+            });
+
+            if (response && response.ok) {
                 response = await response.json();
-                return response;
-            } else {
-                return null;
+                output = response;
             }
+
+            return output;
 
 
         } catch(e) {
@@ -69,12 +73,16 @@ module.exports = {
             let request = {
                 method: 'POST',
                 body: formData,
-                timeout: 0
             };
 
-            let response = await fetch(`${process.env.PYTHONAPI}/create-painting`, request);
+            let output;
 
-            if (response.ok) {
+            let response = await fetch(`${process.env.PYTHONAPI}/create-painting`, request).catch(err => {
+                console.log(err);
+                logController.logger.error(err);
+            });
+
+            if (response && response.ok) {
                 let userPaintingLocation = process.env.USERPAINTINGDIRECTORY+userPaintingId+'.png';
 
                 // Save user painting
@@ -83,10 +91,10 @@ module.exports = {
                 // Update the user painting file location to reflect newly generated painting
                 await provider.updateUserPaintingFileLocation(userPaintingId, userPaintingLocation);
 
-                return userPaintingId;
-            } else {
-                return null;
-            } 
+                output = userPaintingId;
+            }
+
+            return output;
 
         } catch(e) {
             console.log(e);
@@ -109,21 +117,25 @@ module.exports = {
             let request = {
                 method: 'POST',
                 body: formData,
-                timeout: 0
             };
 
-            let response = await fetch(`${process.env.PYTHONAPI}/generate-bam`, request);
+            let output;
 
-            if (response.ok) {
+            let response = await fetch(`${process.env.PYTHONAPI}/generate-bam`, request).catch(err => {
+                console.log(err);
+                logController.logger.error(err);
+            });
+
+            if (response && response.ok) {
                 let bamLocation = process.env.BLOCKFILEDIRECTORY+userSourceFileId+'.jpg';
 
                 // Save BAM image
                 await response.body.pipe(fs.createWriteStream(bamLocation));
 
-                return bamLocation;
-            } else {
-                return null;
+                output = bamLocation;
             }
+
+            return output
 
         } catch(e) {
             console.log(e);
