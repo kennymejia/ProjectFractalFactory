@@ -17,8 +17,6 @@ const logController = require('../controllers/logController.js');
 const path = require('path');
 const AbortController = require('abort-controller');
 
-const controller = new AbortController();
-const signal = controller.signal;
 
 module.exports = {
 
@@ -26,6 +24,10 @@ module.exports = {
     calculateFractalDimension: async (fileLocation, type) => {
 
         try {
+
+            // Create abort signal
+            const controller = new AbortController();
+            const signal = controller.signal;
 
             // Stream image file to API
             const formData = new FormData();
@@ -40,7 +42,7 @@ module.exports = {
 
             let output;
 
-            setTimeout(() => controller.abort(), 120000);
+            setTimeout(() => controller.abort(), 60000);
             let response = await fetch(`${process.env.PYTHONAPI}/fractal-dimension`, request).catch(err => {
                 console.log(err);
                 logController.logger.error(err);
@@ -67,6 +69,10 @@ module.exports = {
 
         try {
             let userPaintingId = await provider.addUserPainting(userId, paintingId, userSourceFileId);
+
+            // Create abort signal
+            const controller = new AbortController();
+            const signal = controller.signal;
 
             // Stream image file to API
             const formData = new FormData();
@@ -118,6 +124,10 @@ module.exports = {
 
         try {
 
+            // Create abort signal
+            const controller = new AbortController();
+            const signal = controller.signal;
+
             // Stream text file to API
             const formData = new FormData();
             formData.append('file', fs.createReadStream(userSourceFileLocation));
@@ -130,7 +140,7 @@ module.exports = {
 
             let output;
 
-            setTimeout(() => controller.abort(), 120000);
+            setTimeout(() => controller.abort(), 60000);
             let response = await fetch(`${process.env.PYTHONAPI}/generate-bam`, request).catch(err => {
                 console.log(err);
                 logController.logger.error(err);
