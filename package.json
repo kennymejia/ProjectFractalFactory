@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/StentonRR/Fractal-Factory#readme",
   "dependencies": {
+    "abort-controller": "^3.0.0",
     "bcryptjs": "^2.4.3",
     "cas-authentication": "0.0.8",
     "coinbase-commerce-node": "^1.0.3",

@@ -14,7 +14,11 @@ const FormData = require('form-data');
 const fs = require('fs');
 const provider = require('../providers/postgresProvider');
 const logController = require('../controllers/logController.js');
-const path = require('path')
+const path = require('path');
+const AbortController = require('abort-controller');
+
+const controller = new AbortController();
+const signal = controller.signal;
 
 module.exports = {
 
@@ -31,10 +35,12 @@ module.exports = {
             let request = {
                 method: 'POST',
                 body: formData,
+                signal: signal
             };
 
             let output;
 
+            setTimeout(() => controller.abort(), 120000);
             let response = await fetch(`${process.env.PYTHONAPI}/fractal-dimension`, request).catch(err => {
                 console.log(err);
                 logController.logger.error(err);
@@ -73,10 +79,12 @@ module.exports = {
             let request = {
                 method: 'POST',
                 body: formData,
+                signal: signal
             };
 
             let output;
 
+            setTimeout(() => controller.abort(), 180000);
             let response = await fetch(`${process.env.PYTHONAPI}/create-painting`, request).catch(err => {
                 console.log(err);
                 logController.logger.error(err);
@@ -117,10 +125,12 @@ module.exports = {
             let request = {
                 method: 'POST',
                 body: formData,
+                signal: signal
             };
 
             let output;
 
+            setTimeout(() => controller.abort(), 120000);
             let response = await fetch(`${process.env.PYTHONAPI}/generate-bam`, request).catch(err => {
                 console.log(err);
                 logController.logger.error(err);
