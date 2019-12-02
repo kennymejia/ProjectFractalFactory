@@ -322,7 +322,7 @@ module.exports = {
             for (let row of result.rows) {
                 day = row.date_added.getDay();
                 hour = row.date_added.getHours();
-                dataUseAll.push({day: day, hour: hour, value: 1});
+                dataUseAll.push({day: day+1, hour: hour+1, value: 1});
             }
 
             // Group the submission objects by day and hour, then take sum
@@ -347,7 +347,7 @@ module.exports = {
             for (let row of result.rows) {
                 day = row.date_added.getDay();
                 hour = row.date_added.getHours();
-                dataUseWeek.push({day: day, hour: hour, value: 1});
+                dataUseWeek.push({day: day+1, hour: hour+1, value: 1});
             }
 
             // Group the submission objects by day and hour, then take sum
